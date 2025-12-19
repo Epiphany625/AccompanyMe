@@ -1,0 +1,70 @@
+/* Button usage:
+  <button class="ds-button ds-button--primary">Primary</button>
+  <button class="ds-button ds-button--secondary">Secondary</button>
+  <button class="ds-button ds-button--warning">Warning</button>
+*/
+
+.ds-button {
+  appearance: none;
+  border: 0;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  padding: 10px 18px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  min-height: 38px;
+  font-size: 0.95rem;
+}
+
+.ds-button:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.ds-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+.ds-button--primary {
+  background: linear-gradient(135deg, var(--brand-strong), #ff8e7b);
+  color: var(--text-inverse);
+  box-shadow: 0 12px 22px rgba(242, 106, 90, 0.35);
+}
+
+.ds-button--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lift);
+}
+
+.ds-button--secondary {
+  background: var(--surface-strong);
+  color: var(--brand-ink);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 18px rgba(156, 58, 48, 0.12);
+}
+
+.ds-button--secondary:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.ds-button--warning {
+  background: linear-gradient(135deg, #ffb055, var(--warning));
+  color: #4d2b10;
+  box-shadow: 0 12px 22px rgba(242, 157, 56, 0.32);
+}
+
+.ds-button--warning:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px rgba(242, 157, 56, 0.38);
+}

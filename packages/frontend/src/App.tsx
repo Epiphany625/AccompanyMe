@@ -1,10 +1,13 @@
+import { Route, Routes } from "react-router-dom"
 import "./App.css"
-import { Auth } from "./components/Auth"
+import { AuthPage } from "./pages/AuthPage"
+import { LandingPage } from "./pages/LandingPage"
 
 // Store: global state. 
 // 
 export const App = () => (
-  <div className="App">
-    <Auth />
-  </div>
+  <Routes>
+    <Route path="/auth" element={<AuthPage />} />
+    <Route path="/dashboard" element={<LandingPage />} />
+  </Routes>
 )
