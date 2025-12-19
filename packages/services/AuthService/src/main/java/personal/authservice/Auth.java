@@ -30,17 +30,17 @@ public class Auth {
 
     @NotBlank
     @Column(nullable = false)
-    private String hashPassword;
+    private String password;
 
     public Auth() {
         // Default constructor
     }
 
-    public Auth(Long id, String username, String email, String hashPassword) {
+    public Auth(Long id, String username, String email, String password) {
         this.id = id;
         this.username = username;
         this.email = email;
-        this.hashPassword = hashPassword;
+        this.password = password;
     }
 
     public Long getId() {
@@ -67,12 +67,12 @@ public class Auth {
         this.email = email;
     }
 
-    public String getHashPassword() {
-        return hashPassword;
+    public String getPassword() {
+        return password;
     }
 
-    public void setHashPassword(String hashPassword) {
-        this.hashPassword = hashPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }

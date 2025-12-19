@@ -26,12 +26,26 @@ public class AuthService {
         }
 
         try {
-            String hashedPassword = passwordEncoder.encode(authInfo.getHashPassword());
-            authInfo.setHashPassword(hashedPassword);
+            String hashedPassword = passwordEncoder.encode(authInfo.getPassword());
+            authInfo.setPassword(hashedPassword);
             authRepository.save(authInfo);
             return ServiceStatus.SUCCESS;
         } catch (Exception err) {
             return ServiceStatus.SIGNUPERROR;
         }
+    }
+
+    public Auth signIn(String email, String password) {
+        List<Auth> users = authRepository.findByEmail(email);
+        if (users.isEmpty()) {
+            return null;
+        }
+
+        Auth user = users.get(0);
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            return null;
+        }
+
+        return user;
     }
 }
