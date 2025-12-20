@@ -1,14 +1,22 @@
 package personal.authservice;
 
+import java.time.Duration;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import personal.authservice.Jwt.JwtUtils;
 
 @Service
 public class AuthService {
     private final AuthRepository authRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     public AuthService(AuthRepository authRepository, BCryptPasswordEncoder passwordEncoder) {
         this.authRepository = authRepository;
@@ -47,5 +55,19 @@ public class AuthService {
         }
 
         return user;
+    }
+
+    public ResponseCookie generateCookie(Auth userAuth) {
+        String token = jwtUtils.generateTokenFromUsername(userAuth);
+
+        ResponseCookie cookie = ResponseCookie.from("access_token", token)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(Duration.ofHours(20))
+                .build();
+
+        return cookie;
     }
 }

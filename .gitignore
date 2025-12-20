@@ -1,6 +1,11 @@
 # Compiled class file
 *.class
 .vscode
+.DS_Store
+
+.env
+packages/frontend/certs/*.pem
+packages/gateway/src/main/resources/keystore.p12
 
 # Log file
 *.log

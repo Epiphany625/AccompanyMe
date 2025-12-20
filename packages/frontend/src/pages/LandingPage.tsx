@@ -1,7 +1,18 @@
+import { ProfileCard } from "../components/ProfileCard"
+import { SearchBar } from "../components/SearchBar"
+import { Sidebar } from "../components/Sidebar"
 
 export const LandingPage = () => {
     return (
-        <h1>Hello. </h1>
+        <div>
+            <div>
+                <Sidebar />
+            </div>
+            <div>
+                <SearchBar />
+                <ProfileCard />
+            </div>
+        </div>
 
     )
 }

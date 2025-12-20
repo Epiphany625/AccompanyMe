@@ -1,7 +1,9 @@
 package personal.authservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import personal.authservice.Jwt.JwtUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 class SigninDto {
     private String email;
@@ -33,17 +34,15 @@ class SigninDto {
     }
 }
 
-class SigninResponse {
+class AuthResponse {
     private Long id;
     private String email;
     private String username;
-    private String token;
 
-    public SigninResponse(Long id, String email, String username, String token) {
+    public AuthResponse(Long id, String email, String username) {
         this.id = id;
         this.email = email;
         this.username = username;
-        this.token = token;
     }
 
     public Long getId() {
@@ -56,10 +55,6 @@ class SigninResponse {
 
     public String getUsername() {
         return username;
-    }
-
-    public String getToken() {
-        return token;
     }
 }
 
@@ -82,10 +77,17 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUpUser(@RequestBody Auth infoAuth) {
+    public ResponseEntity<?> signUpUser(@RequestBody Auth infoAuth) {
         int responseType = authService.signUp(infoAuth);
+
+        AuthResponse response = new AuthResponse(infoAuth.getId(), infoAuth.getEmail(), infoAuth.getUsername());
+
+        ResponseCookie cookie = authService.generateCookie(infoAuth);
+
         if (responseType == ServiceStatus.SUCCESS) {
-            return new ResponseEntity<>(ServiceStatus.RESPONSES.get(responseType), HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body(response);
         }
         return new ResponseEntity<>(ServiceStatus.RESPONSES.get(responseType), HttpStatus.BAD_REQUEST);
     }
@@ -99,9 +101,12 @@ public class AuthController {
                     HttpStatus.UNAUTHORIZED);
         }
 
-        String token = jwtUtils.generateTokenFromUsername(user);
-        SigninResponse response = new SigninResponse(user.getId(), user.getEmail(), user.getUsername(), token);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        ResponseCookie cookie = authService.generateCookie(user);
+
+        AuthResponse response = new AuthResponse(user.getId(), user.getEmail(), user.getUsername());
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
+
     }
 
 }
