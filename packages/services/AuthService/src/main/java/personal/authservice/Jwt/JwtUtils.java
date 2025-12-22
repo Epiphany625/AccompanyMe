@@ -33,15 +33,11 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateTokenFromUsername(Auth authInfo) {
-        String username = authInfo.getUsername();
-        return Jwts.builder().subject(username).issuedAt(new Date())
+    public String generateTokenFromUserId(Auth authInfo) {
+        String userIdString = authInfo.getId().toString();
+        return Jwts.builder().subject(userIdString).issuedAt(new Date())
                 .expiration(new Date((new Date().getTime() + jwtExpirationMs)))
                 .signWith(key()).compact();
-    }
-
-    public String getUsernameFromJwtToken(String token) {
-        return Jwts.parser().verifyWith((SecretKey) key()).build().parseSignedClaims(token).getPayload().getSubject();
     }
 
     private Key key() {

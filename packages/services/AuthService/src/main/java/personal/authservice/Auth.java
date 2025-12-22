@@ -1,5 +1,7 @@
 package personal.authservice;
 
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,8 +18,8 @@ import jakarta.validation.constraints.NotBlank;
         @UniqueConstraint(columnNames = "email") })
 public class Auth {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @NotBlank
     @Column(nullable = false)
@@ -36,18 +38,18 @@ public class Auth {
         // Default constructor
     }
 
-    public Auth(Long id, String username, String email, String password) {
+    public Auth(UUID id, String username, String email, String password) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

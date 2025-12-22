@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import personal.authservice.Jwt.JwtUtils;
+import java.util.UUID;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
 class SigninDto {
@@ -35,17 +37,17 @@ class SigninDto {
 }
 
 class AuthResponse {
-    private Long id;
+    private UUID id;
     private String email;
     private String username;
 
-    public AuthResponse(Long id, String email, String username) {
+    public AuthResponse(UUID id, String email, String username) {
         this.id = id;
         this.email = email;
         this.username = username;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

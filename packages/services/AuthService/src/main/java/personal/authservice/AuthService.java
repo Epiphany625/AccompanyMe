@@ -58,7 +58,7 @@ public class AuthService {
     }
 
     public ResponseCookie generateCookie(Auth userAuth) {
-        String token = jwtUtils.generateTokenFromUsername(userAuth);
+        String token = jwtUtils.generateTokenFromUserId(userAuth);
 
         ResponseCookie cookie = ResponseCookie.from("access_token", token)
                 .httpOnly(true)
