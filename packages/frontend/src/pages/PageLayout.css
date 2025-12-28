@@ -1,0 +1,27 @@
+.page-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.page-content {
+  flex: 1;
+  padding: clamp(20px, 4vw, 48px);
+}
+
+.page-panel {
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: clamp(18px, 3vw, 28px);
+  box-shadow: var(--shadow-soft);
+}
+
+@media (max-width: 720px) {
+  .page-shell {
+    flex-direction: column;
+  }
+
+  .page-content {
+    padding: var(--space-4);
+  }
+}

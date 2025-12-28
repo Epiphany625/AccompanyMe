@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "./hooks";
-import { UserState } from "../interfaces";
+import { UserState } from "../types";
 import { setUser } from "./user.slice";
 
 export const useUserActions = () => {

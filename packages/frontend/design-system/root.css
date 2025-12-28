@@ -27,17 +27,19 @@
   --shadow-active: 0 10px 20px rgba(242, 106, 90, 0.3);
   --ring: 0 0 0 3px rgba(242, 106, 90, 0.25);
 
-  --radius-xl: 24px;
-  --radius-lg: 18px;
-  --radius-md: 12px;
-  --radius-sm: 8px;
+  --radius-sm: 6px;
+  --radius-md: calc(var(--radius-sm) * 2);
+  --radius-lg: calc(var(--radius-sm) * 3);
+  --radius-xl: calc(var(--radius-sm) * 4);
 
   --space-1: 6px;
-  --space-2: 12px;
-  --space-3: 18px;
-  --space-4: 24px;
-  --space-5: 32px;
+  --space-2: calc(var(--space-1) * 2);
+  --space-3: calc(var(--space-1) * 3);
+  --space-4: calc(var(--space-1) * 4);
+  --space-5: calc(var(--space-1) * 5);
 
-  --background-bright: #fff9f5;
+  --background-bright: var(--brand-soft);
+  --background-soft: var(--brand-soft);
+  --background-ink: var(--brand-ink);
 
 }

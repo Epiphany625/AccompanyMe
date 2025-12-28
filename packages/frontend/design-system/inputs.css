@@ -47,7 +47,6 @@
   outline: none;
   border-color: var(--brand-strong);
   box-shadow: var(--ring);
-  background: #fffaf5;
 }
 
 .ds-input--select {

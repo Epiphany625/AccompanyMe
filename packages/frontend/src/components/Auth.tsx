@@ -3,7 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ROOT } from "../constants";
 import { useUserActions, useUserState } from "../state/user.hooks";
-import { UserState } from "../interfaces";
+import { UserState, Gender } from "../types";
+import { MALE, FEMALE, NON_BINARY, PREFER_NOT_TO_SAY } from "../constants";
 import "./Auth.css";
 
 interface LoginInput {
@@ -14,9 +15,9 @@ interface LoginInput {
 interface SignupInput extends LoginInput {
     username: string,
     confirmPassword: string,
-    gender?: 'male' | 'female' | 'non-binary',
-    birthYear?: number,
-    description?: string
+    gender: Gender,
+    birthYear: number,
+    description: string
 }
 
 // signup states. 
@@ -37,6 +38,9 @@ export const Auth = () => {
         email: "",
         password: "",
         confirmPassword: "",
+        gender: PREFER_NOT_TO_SAY,
+        birthYear: new Date().getFullYear(),
+        description: ""
     });
 
     const [signUpNextPage, setSignUpNextpage] = useState<boolean>(false);
@@ -104,7 +108,7 @@ export const Auth = () => {
 
         else if (authState === SIGNUP && signUpNextPage) {
             try {
-                const response = await axios.post(`${ROOT}/user`, {
+                await axios.post(`${ROOT}/user`, {
                     userId,
                     gender: signUpInput.gender,
                     birthYear: signUpInput.birthYear,
@@ -276,14 +280,14 @@ export const Auth = () => {
                                     const value = e.target.value;
                                     setSignUpInput({
                                         ...signUpInput,
-                                        gender: value === "" ? undefined : (value as SignupInput["gender"]),
+                                        gender: value as SignupInput["gender"],
                                     });
                                 }}
                             >
-                                <option value="">Prefer not to say</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="non-binary">Non-binary</option>
+                                <option value={PREFER_NOT_TO_SAY}>{PREFER_NOT_TO_SAY}</option>
+                                <option value={MALE}>{MALE}</option>
+                                <option value={FEMALE}>{FEMALE}</option>
+                                <option value={NON_BINARY}>{NON_BINARY}</option>
                             </select>
                         </div>
                         <div className="ds-field">
@@ -301,7 +305,7 @@ export const Auth = () => {
                                     const value = e.target.value;
                                     setSignUpInput({
                                         ...signUpInput,
-                                        birthYear: value === "" ? undefined : Number(value),
+                                        birthYear: Number(value),
                                     });
                                 }}
                             />
@@ -309,6 +313,7 @@ export const Auth = () => {
                         <div className="ds-field">
                             <label className="ds-label" htmlFor="signupDescription">Provide a short description</label>
                             <input
+                                required={true}
                                 className="ds-input"
                                 id="signupDescription"
                                 type="text"

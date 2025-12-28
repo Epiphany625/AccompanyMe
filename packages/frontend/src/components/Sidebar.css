@@ -27,6 +27,11 @@
     transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
 }
 
+.sidebar-button-active {
+    color: var(--brand-strong);
+    border-left: 2px solid var(--brand-strong);
+}
+
 .sidebar-button:hover {
     transform: translateY(-1px);
     border-color: var(--border-strong);

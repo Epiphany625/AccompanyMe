@@ -28,7 +28,7 @@ public class User {
     @Column(name = "user_id", nullable = false)
     private UUID userId; // from AuthService
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String gender;
 
     @NotNull
@@ -37,7 +37,7 @@ public class User {
     @Column(nullable = false)
     private Integer birthYear;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String description;
 
     @NotNull
