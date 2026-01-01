@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from "react"
-import { useUserState } from "../state/user.hooks"
+import { useUserState, useUserActions } from "../state/user.hooks"
 import { Sidebar } from "../components/Sidebar"
 import axios, { AxiosError } from "axios"
 import { FEMALE, MALE, NON_BINARY, PREFER_NOT_TO_SAY, ROOT } from "../constants"
@@ -7,6 +7,7 @@ import "./PageLayout.css"
 import "./UserProfilePage.css"
 import { useNavigate } from "react-router-dom"
 import { logger } from "../utils/logger"
+import { useValidateUser } from "../utils/hooks"
 
 
 
@@ -33,15 +34,12 @@ export const UserProfilePage = () => {
   const [initialState, setInitialState] = useState<UserProfileState>(EMPTY_PROFILE);
   const [profileState, setProfileState] = useState<UserProfileState>(EMPTY_PROFILE)
   const navigate = useNavigate();
+  const userAction = useUserActions();
+  useValidateUser();
 
   const { username, userId } = useUserState();
+  logger.info("here", userId)
   logger.info("username and userid: ", username, userId);
-
-
-  if (username === "" || username === null || username === undefined ||
-    userId === "" || userId === null || userId === undefined) {
-    navigate("/auth")
-  }
 
   const isDirty = () => {
     return !(initialState.username === profileState.username
@@ -52,16 +50,23 @@ export const UserProfilePage = () => {
     )
   }
 
+  const logOut = () => {
+    userAction.logOut();
+    navigate("/auth");
+  }
+
+
   const retrieveUserProfile = async () => {
     try {
 
       const response = await axios.get<UserProfileState>(`${ROOT}/user/${userId}`);
 
+
       const { gender, birthYear, description, profilePicLink } = response.data;
 
       const resultObj: UserProfileState = {
         ...profileState,
-        username: username,
+        username: username ?? "", // if code reaches this stage, username will never be null. this is just for syntax. 
         gender: gender,
         birthYear: birthYear,
         description: description,
@@ -70,14 +75,20 @@ export const UserProfilePage = () => {
 
       setProfileState(resultObj);
 
-      logger.info("result obj..")
-      logger.info(resultObj)
       setInitialState(resultObj);
 
 
-    } catch (error) {
+    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string }>;
+        const axiosError = error as AxiosError<{ message?: string }>;
+
+        const status = axiosError.response?.status;
+
+        if (status === 401) {
+          // unauthorized
+          await logOut();
+          return;
+        }
 
         console.error(
           "Failed to fetch user:",
@@ -91,7 +102,8 @@ export const UserProfilePage = () => {
 
   useEffect(() => {
     retrieveUserProfile();
-  }, [])
+  }, [username, userId])
+
 
   useEffect(() => {
     if (!profileState.photoFile) {
@@ -100,7 +112,7 @@ export const UserProfilePage = () => {
 
     const objectUrl = URL.createObjectURL(profileState.photoFile)
 
-    setProfileState((prev) => ({ ...prev, photoUrl: objectUrl }))
+    setProfileState((prev) => ({ ...prev, profilePicLink: objectUrl }))
 
     return () => {
       URL.revokeObjectURL(objectUrl)
@@ -119,7 +131,6 @@ export const UserProfilePage = () => {
   const handleReset = () => {
     setProfileState(initialState)
   }
-
   return (
     <div className="page-shell">
       <Sidebar activePage="profile" />
@@ -213,7 +224,7 @@ export const UserProfilePage = () => {
                   className="ds-input"
                   id="displayName"
                   type="text"
-                  value={profileState.username}
+                  value={profileState.username ?? ""}
                   onChange={(event) => handleChange("username", event.target.value)}
                 />
               </div>
@@ -270,7 +281,7 @@ export const UserProfilePage = () => {
                   className="ds-button ds-button--secondary"
                   type="button"
                   onClick={handleReset}
-                  disabled={!isDirty}
+                  disabled={!isDirty()}
                 >
                   Reset
                 </button>
@@ -280,6 +291,7 @@ export const UserProfilePage = () => {
                 <button
                   className="ds-button ds-button--secondary"
                   type="button"
+                  onClick={logOut}
                 >
                   Log Out
                 </button>

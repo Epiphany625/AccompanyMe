@@ -2,6 +2,8 @@ package personal.authservice;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
@@ -21,6 +23,19 @@ public class AuthService {
     public AuthService(AuthRepository authRepository, BCryptPasswordEncoder passwordEncoder) {
         this.authRepository = authRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public Optional<Auth> jwtRetrieve(String jwt) {
+        if (jwt == null || jwt.isBlank()) {
+            return Optional.empty();
+        }
+
+        try {
+            UUID id = jwtUtils.getUserIdFromJwtToken(jwt);
+            return authRepository.findById(id);
+        } catch (Exception err) {
+            return Optional.empty();
+        }
     }
 
     public int signUp(Auth authInfo) {
@@ -57,8 +72,8 @@ public class AuthService {
         return user;
     }
 
-    public ResponseCookie generateCookie(Auth userAuth) {
-        String token = jwtUtils.generateTokenFromUserId(userAuth);
+    public ResponseCookie generateCookie(UUID id) {
+        String token = jwtUtils.generateTokenFromUserId(id);
 
         ResponseCookie cookie = ResponseCookie.from("access_token", token)
                 .httpOnly(true)
@@ -69,5 +84,15 @@ public class AuthService {
                 .build();
 
         return cookie;
+    }
+
+    public ResponseCookie clearAuthCookie() {
+        return ResponseCookie.from("access_token", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
     }
 }

@@ -1,7 +1,9 @@
 import { Sidebar } from "../components/Sidebar"
+import { useValidateUser } from "../utils/hooks";
 import "./PageLayout.css"
 
 export const AiChatPage = () => {
+  useValidateUser();
   return (
     <div className="page-shell">
       <Sidebar activePage="aichat" />

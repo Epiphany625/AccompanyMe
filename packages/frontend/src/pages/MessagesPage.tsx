@@ -2,10 +2,13 @@ import { useState } from "react"
 import { Sidebar } from "../components/Sidebar"
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import { useValidateUser } from "../utils/hooks";
 import "./PageLayout.css"
 
 
 export const MessagesPage = () => {
+
+  useValidateUser();
 
   const options = ['The Godfather', 'Pulp Fiction'];
   const [selectedMovie, setSelectedMovie] = useState<string | null>(null);

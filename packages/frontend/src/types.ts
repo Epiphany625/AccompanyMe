@@ -6,9 +6,8 @@ export type Gender =
     | typeof NON_BINARY
     | typeof PREFER_NOT_TO_SAY;
 
-
 export interface UserState {
-    userId: string,
-    username: string,
-    email: string
+    userId: string | null,
+    username: string | null,
+    email: string | null
 }

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ROOT } from "../constants";
 import { useUserActions, useUserState } from "../state/user.hooks";
-import { UserState, Gender } from "../types";
+import { Gender } from "../types";
 import { MALE, FEMALE, NON_BINARY, PREFER_NOT_TO_SAY } from "../constants";
 import "./Auth.css";
 
@@ -58,57 +58,30 @@ export const Auth = () => {
             }
 
             try {
-                const response = await axios.post(`${ROOT}/auth/signup`, {
-                    username: signUpInput.username,
-                    email: signUpInput.email,
-                    password: signUpInput.password,
-                });
-
-                userAction.setUser({
-                    userId: response.data.id,
-                    email: response.data.email,
-                    username: response.data.username
-                } as UserState)
-
+                await userAction.signUp(signUpInput.username, signUpInput.email, signUpInput.password).unwrap();
+                setSignUpNextpage(true);
             } catch (error) {
-                const message = axios.isAxiosError(error)
-                    ? (error.response?.data?.message ?? error.message)
-                    : "Sign up failed. Please try again.";
-                setErrMsg(message);
-                return;
+                setErrMsg(typeof error === "string" ? error : "Sign up failed. Please try again.");
             }
 
-            setSignUpNextpage(true);
         }
 
         else if (authState === LOGIN) {
             // http://localhost:9000/auth/login
+
             try {
-                const response = await axios.post(`${ROOT}/auth/login`, {
-                    email: loginInput.email,
-                    password: loginInput.password,
-                });
-
-                userAction.setUser({
-                    userId: response.data.id,
-                    email: response.data.email,
-                    username: response.data.username
-                } as UserState)
-
-            } catch (error) {
-                const message = axios.isAxiosError(error)
-                    ? (error.response?.data?.message ?? error.message)
-                    : "Login failed. Please try again.";
-                setErrMsg(message);
-                return;
+                await userAction.logIn(loginInput.email, loginInput.password).unwrap();
+                navigate("/dashboard")
             }
 
-            navigate("/dashboard")
+            catch (error) {
+                setErrMsg(typeof error === "string" ? error : "Login failed. Please try again.");
+            }
         }
 
         else if (authState === SIGNUP && signUpNextPage) {
             try {
-                await axios.post(`${ROOT}/user`, {
+                await axios.post(`${ROOT}/auth/profile`, {
                     userId,
                     gender: signUpInput.gender,
                     birthYear: signUpInput.birthYear,
@@ -133,13 +106,14 @@ export const Auth = () => {
                 <div className="auth-switch">
                     <button
                         className={`ds-button ${authState === SIGNUP ? "ds-button--primary" : "ds-button--secondary"}`}
-                        onClick={() => setAuthState(SIGNUP)}
+                        onClick={() => { setAuthState(SIGNUP); setErrMsg("") }}
                     >
                         Sign up
                     </button>
                     <button
                         className={`ds-button ${authState === LOGIN ? "ds-button--primary" : "ds-button--secondary"}`}
-                        onClick={() => setAuthState(LOGIN)}
+                        onClick={() => { setAuthState(LOGIN); setErrMsg("") }}
+                        disabled={signUpNextPage}
                     >
                         Log in
                     </button>
@@ -328,11 +302,11 @@ export const Auth = () => {
                                 }}
                             />
                         </div>
-                        <button className="ds-button ds-button--primary" type="submit" onClick={handleSubmit}>Finish</button>
+                        <button className="ds-button ds-button--primary" type="submit">Finish</button>
                         <p className="ds-help ds-help--error">{errMsg}</p>
                     </form>
                 }
             </div>
-        </div>
+        </div >
     )
 }

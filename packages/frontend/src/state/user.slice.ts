@@ -1,19 +1,84 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { UserState } from "../types"
+import { ROOT } from "../constants"
+import axios from "axios"
+
+type LoginArgs = {
+    inputEmail: string
+    password: string
+}
+
+type LoginResponse = {
+    userId: string
+    email: string
+    username: string
+}
+
+type SignUpArgs = {
+    inputUsername: string
+    inputEmail: string
+    inputPassword: string
+}
 
 const initialState: UserState = {
     userId: "",
     username: "",
-    email: "hello@example.com"
+    email: "hello@example.com",
 }
 
-// export const incrementAsync = createAsyncThunk(
-//     "counter/incrementAysnc",
-//     async (amount: number) => {
-//         await new Promise(resolve => setTimeout(resolve, 1000));
-//         return amount;
-//     }
-// )
+export const logOut = createAsyncThunk(
+    "user/logout",
+    async () => {
+        await axios.post(`${ROOT}/auth/logout`);
+    }
+)
+
+export const logIn = createAsyncThunk<LoginResponse, LoginArgs, { rejectValue: string }>(
+    "user/login",
+    async ({ inputEmail, password }, thunkAPI) => {
+        try {
+            const response = await axios.post(`${ROOT}/auth/login`, {
+                email: inputEmail,
+                password: password,
+            })
+
+            const { id, email, username } = response.data
+
+            return { userId: id, email, username }
+        } catch (error) {
+            const message = axios.isAxiosError(error)
+                ? (error.response?.data?.message ?? error.message)
+                : "Login failed. Please try again."
+            return thunkAPI.rejectWithValue(message)
+        }
+    }
+)
+
+export const signUp = createAsyncThunk<LoginResponse, SignUpArgs, { rejectValue: string }>(
+    "user/signup",
+    async ({ inputUsername, inputEmail, inputPassword }, thunkAPI) => {
+        try {
+            const response = await axios.post(`${ROOT}/auth/signup`, {
+                username: inputUsername,
+                email: inputEmail,
+                password: inputPassword
+            })
+
+            const { id, email, username } = response.data
+
+            return { userId: id, email, username }
+        }
+        catch (error) {
+            const message = axios.isAxiosError(error)
+                ? (error.response?.data?.message ?? error.message)
+                : "Sign up failed. Please try again.";
+            return thunkAPI.rejectWithValue(message)
+        }
+    }
+)
+
+// http://localhost:9000/auth/login
+
 
 const userSlice = createSlice({
     name: "userState",
@@ -33,8 +98,27 @@ const userSlice = createSlice({
             state.userId = action.payload.userId
             state.username = action.payload.username
         }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(logOut.fulfilled, (state, action) => {
+                state.userId = null;
+                state.username = null;
+                state.email = null;
+            })
+            .addCase(logIn.fulfilled, (state, action) => {
+                state.userId = action.payload.userId
+                state.email = action.payload.email
+                state.username = action.payload.username
+            })
+            .addCase(signUp.fulfilled, (state, action) => {
+                state.userId = action.payload.userId
+                state.email = action.payload.email
+                state.username = action.payload.username
+            })
     }
 })
+
 
 export const { setUserId, setUsername, setEmail, setUser } = userSlice.actions;
 export const userReducer = userSlice.reducer;

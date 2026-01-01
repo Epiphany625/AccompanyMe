@@ -2,6 +2,7 @@ package personal.authservice.Jwt;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
@@ -33,11 +34,17 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateTokenFromUserId(Auth authInfo) {
-        String userIdString = authInfo.getId().toString();
+    public String generateTokenFromUserId(UUID id) {
+        String userIdString = id.toString();
         return Jwts.builder().subject(userIdString).issuedAt(new Date())
                 .expiration(new Date((new Date().getTime() + jwtExpirationMs)))
                 .signWith(key()).compact();
+    }
+
+    public UUID getUserIdFromJwtToken(String token) {
+        String userIdString = Jwts.parser().verifyWith((SecretKey) key()).build().parseSignedClaims(token).getPayload()
+                .getSubject();
+        return UUID.fromString(userIdString);
     }
 
     private Key key() {
