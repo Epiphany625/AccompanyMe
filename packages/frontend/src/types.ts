@@ -11,3 +11,17 @@ export interface UserState {
     username: string | null,
     email: string | null
 }
+
+export type AvailabilityFormState = {
+    startTime: string
+    duration: string
+}
+
+export type AvailabilityRecord = {
+    id: number
+    userId: string
+    availabilityStart?: string
+    availabilityDuration?: number
+    startTime?: string
+    duration?: number
+}

@@ -6,6 +6,7 @@ import { LandingPage } from "./pages/LandingPage"
 import { MessagesPage } from "./pages/MessagesPage"
 import { AiChatPage } from "./pages/AiChatPage"
 import { UserProfilePage } from "./pages/UserProfilePage"
+import { AppointmentsPage } from "./pages/AppointmentsPage"
 
 // Store: global state. 
 // 
@@ -18,6 +19,7 @@ export const App = () => {
       <Route path="/messages" element={<MessagesPage />} />
       <Route path="/aichat" element={<AiChatPage />} />
       <Route path="/profile" element={<UserProfilePage />} />
+      <Route path="/appointments" element={<AppointmentsPage />} />
     </Routes>
   )
 }

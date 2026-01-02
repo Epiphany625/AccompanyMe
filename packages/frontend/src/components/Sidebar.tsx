@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import "./Sidebar.css";
 
-type PageRequested = "dashboard" | "messages" | "aichat" | "profile";
+type PageRequested = "dashboard" | "messages" | "aichat" | "profile" | "appointments";
 
 type SidebarProps = {
     activePage: PageRequested;
@@ -14,6 +14,7 @@ export const Sidebar = ({ activePage }: SidebarProps) => {
         { key: "dashboard", label: "Dashboard", path: "/dashboard" },
         { key: "messages", label: "Messages", path: "/messages" },
         { key: "aichat", label: "AI", path: "/aichat" },
+        { key: "appointments", label: "Appointments", path: "/appointments" },
         { key: "profile", label: "Profile", path: "/profile" }
     ];
 
