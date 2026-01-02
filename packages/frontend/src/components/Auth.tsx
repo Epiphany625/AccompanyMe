@@ -6,6 +6,7 @@ import { useUserActions, useUserState } from "../state/user.hooks";
 import { Gender } from "../types";
 import { MALE, FEMALE, NON_BINARY, PREFER_NOT_TO_SAY } from "../constants";
 import "./Auth.css";
+import Button from "../../design-system/buttons/Button";
 
 interface LoginInput {
     email: string,
@@ -104,19 +105,19 @@ export const Auth = () => {
         <div className="auth-wrapper">
             <div className="auth-component">
                 <div className="auth-switch">
-                    <button
-                        className={`ds-button ${authState === SIGNUP ? "ds-button--primary" : "ds-button--secondary"}`}
-                        onClick={() => { setAuthState(SIGNUP); setErrMsg("") }}
-                    >
+
+                    <Button
+                        variant={authState === SIGNUP ? "primary" : "secondary"}
+                        onClick={() => { setAuthState(SIGNUP); setErrMsg("") }}>
                         Sign up
-                    </button>
-                    <button
-                        className={`ds-button ${authState === LOGIN ? "ds-button--primary" : "ds-button--secondary"}`}
+                    </Button>
+                    <Button
+                        variant={authState === LOGIN ? "primary" : "secondary"}
                         onClick={() => { setAuthState(LOGIN); setErrMsg("") }}
                         disabled={signUpNextPage}
                     >
                         Log in
-                    </button>
+                    </Button>
                 </div>
                 {(authState !== SIGNUP || !signUpNextPage) && (
                     <form className="ds-form" onSubmit={handleSubmit}>
@@ -229,7 +230,7 @@ export const Auth = () => {
                             </div>
                         }
                         <div className="auth-actions">
-                            <button className="ds-button ds-button--primary" type="submit">Continue</button>
+                            <Button variant="primary" type="submit">Continue</Button>
                             <p className="ds-help ds-help--error">{errMsg}</p>
                         </div>
                     </form>
@@ -302,7 +303,7 @@ export const Auth = () => {
                                 }}
                             />
                         </div>
-                        <button className="ds-button ds-button--primary" type="submit">Finish</button>
+                        <Button variant="primary" type="submit">Finish</Button>
                         <p className="ds-help ds-help--error">{errMsg}</p>
                     </form>
                 }

@@ -1,0 +1,1 @@
+If you need to use the design systems component, do not use CSS and class names directly. Instead, use the defined components. 

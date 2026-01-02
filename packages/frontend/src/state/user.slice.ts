@@ -101,7 +101,7 @@ const userSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(logOut.fulfilled, (state, action) => {
+            .addCase(logOut.fulfilled, (state) => {
                 state.userId = null;
                 state.username = null;
                 state.email = null;
