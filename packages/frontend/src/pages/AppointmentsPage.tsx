@@ -1,7 +1,7 @@
 import { Sidebar } from "../components/Sidebar"
 import { useValidateUser } from "../utils/hooks"
-import { AddAvailabilityCard } from "./AddAvailabilityCard"
-import { UserAvailabilityList } from "./UserAvailabilityList"
+import { AddAvailabilityCard } from "../components/AddAvailabilityCard"
+import { UserAvailabilityList } from "../components/UserAvailabilityList"
 import "./PageLayout.css"
 import "./AppointmentsPage.css"
 

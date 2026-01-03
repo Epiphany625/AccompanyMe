@@ -27,8 +27,7 @@ public class Availability {
         // Default constructor
     }
 
-    public Availability(Long id, UUID userId, OffsetDateTime startTime, Long duration
-                       ) {
+    public Availability(Long id, UUID userId, OffsetDateTime startTime, Long duration) {
         this.id = id;
         this.userId = userId;
         this.startTime = startTime;
@@ -51,19 +50,19 @@ public class Availability {
         this.userId = userId;
     }
 
-    public OffsetDateTime getAvailabilityStart() {
+    public OffsetDateTime getStartTime() {
         return startTime;
     }
 
-    public void setAvailabilityStart(OffsetDateTime startTime) {
+    public void setstartTime(OffsetDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public Long getAvailabilityDuration() {
+    public Long getDuration() {
         return duration;
     }
 
-    public void setAvailabilityDuration(Long duration) {
+    public void setDuration(Long duration) {
         this.duration = duration;
     }
 }

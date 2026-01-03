@@ -19,8 +19,8 @@ public class AvailabilityService {
     }
 
     public Optional<Availability> createAvailability(Availability availability) {
-        if (availability == null || availability.getUserId() == null || availability.getAvailabilityStart() == null
-                || availability.getAvailabilityDuration() == null || availability.getAvailabilityDuration() < 1) {
+        if (availability == null || availability.getUserId() == null || availability.getStartTime() == null
+                || availability.getDuration() == null || availability.getDuration() < 1) {
             return Optional.empty();
         }
 
@@ -45,8 +45,8 @@ public class AvailabilityService {
             return Optional.empty();
         }
 
-        if (availability.getUserId() == null || availability.getAvailabilityStart() == null
-                || availability.getAvailabilityDuration() == null || availability.getAvailabilityDuration() < 1) {
+        if (availability.getUserId() == null || availability.getStartTime() == null
+                || availability.getDuration() == null || availability.getDuration() < 1) {
             return Optional.empty();
         }
 
@@ -57,8 +57,8 @@ public class AvailabilityService {
 
         Availability record = existing.get();
         record.setUserId(availability.getUserId());
-        record.setAvailabilityStart(availability.getAvailabilityStart());
-        record.setAvailabilityDuration(availability.getAvailabilityDuration());
+        record.setstartTime(availability.getStartTime());
+        record.setDuration(availability.getDuration());
 
         return Optional.of(availabilityRepository.save(record));
     }

@@ -20,8 +20,6 @@ export type AvailabilityFormState = {
 export type AvailabilityRecord = {
     id: number
     userId: string
-    availabilityStart?: string
-    availabilityDuration?: number
-    startTime?: string
-    duration?: number
+    startTime: string
+    duration: number
 }

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import Button from "../../design-system/buttons/Button"
-import axios, { AxiosError } from "axios"
-import { ROOT, EMPTY_AVAILABILITY } from "../constants"
+import { EMPTY_AVAILABILITY } from "../constants"
 import { useUserState } from "../state/user.hooks"
+import { useAvailabilityActions, useAvailabilityState } from "../state/availability.hooks"
 import type { AvailabilityFormState, AvailabilityRecord } from "../types"
 
 const formatAvailabilityTime = (raw: string) => {
@@ -31,6 +31,9 @@ export const UserAvailabilityList = () => {
     const [editForm, setEditForm] = useState<AvailabilityFormState>(EMPTY_AVAILABILITY)
     const [isSaving, setIsSaving] = useState(false)
 
+    const availabilityAction = useAvailabilityActions()
+    const availabilityState = useAvailabilityState()
+
     useEffect(() => {
         if (!userId) {
             return
@@ -41,27 +44,13 @@ export const UserAvailabilityList = () => {
             setIsLoading(true)
             setErrorMessage(null)
             try {
-                const response = await axios.get<AvailabilityRecord[]>(
-                    `${ROOT}/availabilities/user/${userId}`
-                )
-                if (!isActive) {
-                    return
+                if (availabilityState.length == 0) {
+                    await availabilityAction.loadAvailabilities(userId).unwrap()
                 }
-                setAvailabilities(response.data)
+                console.log(availabilityState)
+                setAvailabilities(availabilityState)
             } catch (error: unknown) {
-                if (!isActive) {
-                    return
-                }
-                if (axios.isAxiosError(error)) {
-                    const axiosError = error as AxiosError<{ message?: string }>
-                    setErrorMessage(
-                        axiosError.response?.data?.message ??
-                        axiosError.message ??
-                        "Unable to load availability."
-                    )
-                } else {
-                    setErrorMessage("Unable to load availability.")
-                }
+                setErrorMessage(typeof error === "string" ? error : "Unable to load availabilities. Please try again.");
             } finally {
                 if (isActive) {
                     setIsLoading(false)
@@ -74,36 +63,24 @@ export const UserAvailabilityList = () => {
         return () => {
             isActive = false
         }
-    }, [userId])
+    }, [userId, availabilityAction])
 
     const handleDelete = async (availabilityId: number) => {
         setErrorMessage(null)
         setDeletingIds((prev) => [...prev, availabilityId])
         try {
-            await axios.delete(`${ROOT}/availabilities/${availabilityId}`)
+            await availabilityAction.deleteAvailability(availabilityId).unwrap()
             setAvailabilities((prev) => prev.filter((item) => item.id !== availabilityId))
         } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-                const axiosError = error as AxiosError<{ message?: string }>
-                setErrorMessage(
-                    axiosError.response?.data?.message ??
-                    axiosError.message ??
-                    "Unable to delete availability."
-                )
-            } else {
-                setErrorMessage("Unable to delete availability.")
-            }
+            setErrorMessage(typeof error === "string" ? error : "Unable to delete availability.")
         } finally {
             setDeletingIds((prev) => prev.filter((id) => id !== availabilityId))
         }
     }
 
     const startEditing = (availability: AvailabilityRecord) => {
-        const start = availability.availabilityStart ?? availability.startTime ?? ""
-        const duration =
-            availability.availabilityDuration ??
-            availability.duration ??
-            0
+        const start = availability.startTime
+        const duration = availability.duration
         setEditingId(availability.id)
         setEditForm({
             startTime: start ? toDatetimeLocalValue(start) : "",
@@ -148,29 +125,15 @@ export const UserAvailabilityList = () => {
         setErrorMessage(null)
 
         try {
-            const response = await axios.put<AvailabilityRecord>(
-                `${ROOT}/availabilities/${availabilityId}`,
-                {
-                    userId,
-                    availabilityStart: parsedStart.toISOString(),
-                    availabilityDuration: durationValue,
-                }
-            )
+            const response = await availabilityAction
+                .editAvailability(availabilityId, userId, parsedStart.toISOString(), durationValue)
+                .unwrap()
             setAvailabilities((prev) =>
-                prev.map((item) => (item.id === availabilityId ? response.data : item))
+                prev.map((item) => (item.id === availabilityId ? response : item))
             )
             cancelEditing()
         } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-                const axiosError = error as AxiosError<{ message?: string }>
-                setErrorMessage(
-                    axiosError.response?.data?.message ??
-                    axiosError.message ??
-                    "Unable to update availability."
-                )
-            } else {
-                setErrorMessage("Unable to update availability.")
-            }
+            setErrorMessage(typeof error === "string" ? error : "Unable to update availability.")
         } finally {
             setIsSaving(false)
         }
@@ -192,14 +155,8 @@ export const UserAvailabilityList = () => {
         return (
             <ul className="availability-list">
                 {availabilities.map((availability) => {
-                    const start =
-                        availability.availabilityStart ??
-                        availability.startTime ??
-                        ""
-                    const duration =
-                        availability.availabilityDuration ??
-                        availability.duration ??
-                        0
+                    const start = availability.startTime
+                    const duration = availability.duration
                     const isEditing = editingId === availability.id
                     return (
                         <li className="availability-list-item" key={availability.id}>

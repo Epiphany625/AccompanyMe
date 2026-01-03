@@ -1,9 +1,10 @@
 import { FormEvent, useState } from "react"
 import Button from "../../design-system/buttons/Button"
 import axios, { AxiosError } from "axios"
-import { ROOT, EMPTY_AVAILABILITY } from "../constants"
+import { EMPTY_AVAILABILITY } from "../constants"
 import { useUserState } from "../state/user.hooks"
 import type { AvailabilityFormState } from "../types"
+import { useAvailabilityActions } from "../state/availability.hooks"
 
 export const AddAvailabilityCard = () => {
     const { userId } = useUserState()
@@ -12,6 +13,8 @@ export const AddAvailabilityCard = () => {
     const [statusMessage, setStatusMessage] = useState<string | null>(null)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const availabilityAction = useAvailabilityActions();
 
     const handleChange = (field: keyof AvailabilityFormState, value: string) => {
         setFormState((prev) => ({ ...prev, [field]: value }))
@@ -51,11 +54,9 @@ export const AddAvailabilityCard = () => {
         setIsSubmitting(true)
 
         try {
-            await axios.post(`${ROOT}/availabilities`, {
-                userId,
-                availabilityStart: parsedStart.toISOString(),
-                availabilityDuration: durationValue,
-            })
+            await availabilityAction.addAvailability(
+                userId, parsedStart.toISOString(), durationValue
+            ).unwrap()
             setStatusMessage("Availability saved.")
             setFormState(EMPTY_AVAILABILITY)
         } catch (error: unknown) {
@@ -115,12 +116,12 @@ export const AddAvailabilityCard = () => {
             </header>
             <form className="availability-form" onSubmit={handleSubmit}>
                 <div className="ds-field">
-                    <label className="ds-label" htmlFor="availabilityStart">
+                    <label className="ds-label" htmlFor="startTime">
                         Start time
                     </label>
                     <input
                         className="ds-input"
-                        id="availabilityStart"
+                        id="startTime"
                         type="datetime-local"
                         value={formState.startTime}
                         onChange={(event) => handleChange("startTime", event.target.value)}
@@ -128,12 +129,12 @@ export const AddAvailabilityCard = () => {
                     <div className="ds-help">Local time will be converted to UTC when submitted.</div>
                 </div>
                 <div className="ds-field">
-                    <label className="ds-label" htmlFor="availabilityDuration">
+                    <label className="ds-label" htmlFor="duration">
                         Duration (minutes)
                     </label>
                     <input
                         className="ds-input"
-                        id="availabilityDuration"
+                        id="duration"
                         type="number"
                         min={1}
                         value={formState.duration}
