@@ -9,13 +9,8 @@ import { useNavigate } from "react-router-dom";
 export const useSkipAuth = () => {
     const userAction = useUserActions();
     const navigate = useNavigate();
-    const { userId, username, email } = useUserState();
 
     useEffect(() => {
-
-        if ((!userId) || (!username) || (!email)) {
-            return;
-        }
 
         let isActive = true;
         const validate = async () => {
