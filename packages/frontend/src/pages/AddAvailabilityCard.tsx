@@ -1,4 +1,5 @@
 import { FormEvent, useState } from "react"
+import Button from "../../design-system/buttons/Button"
 import axios, { AxiosError } from "axios"
 import { ROOT, EMPTY_AVAILABILITY } from "../constants"
 import { useUserState } from "../state/user.hooks"
@@ -101,16 +102,16 @@ export const AddAvailabilityCard = () => {
                     <p className="availability-card-title">New availability</p>
                     <p className="availability-card-desc">Pick a start time and how long you are free.</p>
                 </div>
-                <button
-                    className="ds-button ds-button--secondary"
+                <Button
                     type="button"
+                    variant="secondary"
                     onClick={() => {
                         setIsExpanded(false)
                         resetMessages()
                     }}
                 >
                     Cancel
-                </button>
+                </Button>
             </header>
             <form className="availability-form" onSubmit={handleSubmit}>
                 <div className="ds-field">
@@ -140,9 +141,9 @@ export const AddAvailabilityCard = () => {
                     />
                 </div>
                 <div className="availability-form-actions">
-                    <button className="ds-button ds-button--primary" type="submit" disabled={isSubmitting}>
+                    <Button type="submit" variant="primary" disabled={isSubmitting}>
                         {isSubmitting ? "Saving..." : "Save availability"}
-                    </button>
+                    </Button>
                     {statusMessage ? (
                         <span className="availability-status availability-status--success">{statusMessage}</span>
                     ) : null}

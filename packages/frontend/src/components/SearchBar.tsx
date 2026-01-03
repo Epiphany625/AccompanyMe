@@ -1,4 +1,5 @@
 import type { FormEvent } from "react";
+import Button from "../../design-system/buttons/Button";
 import "./SearchBar.css";
 
 export const SearchBar = () => {
@@ -43,17 +44,17 @@ export const SearchBar = () => {
                         placeholder="Try "
                     />
                 </div>
-                <button className="ds-button ds-button--primary search-bar__button" type="submit">
+                <Button className="search-bar__button" type="submit" variant="primary">
                     Search
-                </button>
+                </Button>
             </form>
 
             <div className="search-bar__chips" aria-label="Popular searches">
                 <span className="search-bar__chips-label">Popular:</span>
-                <button className="search-bar__chip" type="button">Garden strolls</button>
-                <button className="search-bar__chip" type="button">Cafe chats</button>
-                <button className="search-bar__chip" type="button">Museum visits</button>
-                <button className="search-bar__chip" type="button">Evening walks</button>
+                <Button className="search-bar__chip" type="button" variant="secondary">Garden strolls</Button>
+                <Button className="search-bar__chip" type="button" variant="secondary">Cafe chats</Button>
+                <Button className="search-bar__chip" type="button" variant="secondary">Museum visits</Button>
+                <Button className="search-bar__chip" type="button" variant="secondary">Evening walks</Button>
             </div>
         </section>
     );

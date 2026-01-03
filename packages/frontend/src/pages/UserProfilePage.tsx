@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useState } from "react"
 import { useUserState, useUserActions } from "../state/user.hooks"
 import { Sidebar } from "../components/Sidebar"
+import Button from "../../design-system/buttons/Button"
 import axios, { AxiosError } from "axios"
 import { FEMALE, MALE, NON_BINARY, PREFER_NOT_TO_SAY, ROOT } from "../constants"
 import "./PageLayout.css"
@@ -145,9 +146,9 @@ export const UserProfilePage = () => {
                 dashboard.
               </p>
             </div>
-            <button className="ds-button ds-button--secondary" type="button">
+            <Button type="button" variant="secondary">
               View public profile
-            </button>
+            </Button>
           </header>
 
           <div className="profile-grid">
@@ -277,24 +278,24 @@ export const UserProfilePage = () => {
               </div>
 
               <div className="profile-actions">
-                <button
-                  className="ds-button ds-button--secondary"
+                <Button
                   type="button"
+                  variant="secondary"
                   onClick={handleReset}
                   disabled={!isDirty()}
                 >
                   Reset
-                </button>
-                <button className="ds-button ds-button--primary" type="button">
+                </Button>
+                <Button type="button" variant="primary">
                   Save changes
-                </button>
-                <button
-                  className="ds-button ds-button--secondary"
+                </Button>
+                <Button
                   type="button"
+                  variant="secondary"
                   onClick={logOut}
                 >
                   Log Out
-                </button>
+                </Button>
               </div>
             </section>
           </div>

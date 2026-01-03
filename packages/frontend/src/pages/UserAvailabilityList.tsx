@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import Button from "../../design-system/buttons/Button"
 import axios, { AxiosError } from "axios"
 import { ROOT, EMPTY_AVAILABILITY } from "../constants"
 import { useUserState } from "../state/user.hooks"
@@ -232,22 +233,24 @@ export const UserAvailabilityList = () => {
                                         </div>
                                     </div>
                                     <div className="availability-item-actions">
-                                        <button
-                                            className="ds-button ds-button--primary availability-edit-button"
+                                        <Button
+                                            className="availability-edit-button"
                                             type="button"
+                                            variant="primary"
                                             onClick={() => handleSave(availability.id)}
                                             disabled={isSaving}
                                         >
                                             {isSaving ? "Saving..." : "Save"}
-                                        </button>
-                                        <button
-                                            className="ds-button ds-button--secondary availability-edit-button"
+                                        </Button>
+                                        <Button
+                                            className="availability-edit-button"
                                             type="button"
+                                            variant="secondary"
                                             onClick={cancelEditing}
                                             disabled={isSaving}
                                         >
                                             Cancel
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             ) : (
@@ -262,21 +265,23 @@ export const UserAvailabilityList = () => {
                                     </div>
                                     <div className="availability-item-actions">
                                         <span className="availability-item-pill">Open</span>
-                                        <button
-                                            className="ds-button ds-button--secondary availability-edit-button"
+                                        <Button
+                                            className="availability-edit-button"
                                             type="button"
+                                            variant="secondary"
                                             onClick={() => startEditing(availability)}
                                         >
                                             Edit
-                                        </button>
-                                        <button
-                                            className="ds-button ds-button--warning availability-delete-button"
+                                        </Button>
+                                        <Button
+                                            className="availability-delete-button"
                                             type="button"
+                                            variant="warning"
                                             onClick={() => handleDelete(availability.id)}
                                             disabled={deletingIds.includes(availability.id)}
                                         >
                                             {deletingIds.includes(availability.id) ? "Deleting..." : "Delete"}
-                                        </button>
+                                        </Button>
                                     </div>
                                 </>
                             )}
