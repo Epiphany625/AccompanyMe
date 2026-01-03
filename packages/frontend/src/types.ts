@@ -23,3 +23,12 @@ export type AvailabilityRecord = {
     startTime: string
     duration: number
 }
+
+export type UserProfile = {
+    id?: string
+    userId: string
+    gender: string
+    birthYear: number
+    description: string
+    profilePicLink?: string | null
+}

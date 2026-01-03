@@ -1,8 +1,11 @@
 package personal.userservice;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -58,5 +61,11 @@ public class UserService {
         }
 
         return Optional.of(userRepository.save(user));
+    }
+
+    public List<User> getRecentUsers(int limit) {
+        return userRepository
+                .findAll(PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "registrationDate")))
+                .getContent();
     }
 }

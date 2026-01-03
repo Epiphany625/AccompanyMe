@@ -1,5 +1,5 @@
 import { ComponentPropsWithoutRef } from 'react';
-import "./buttons.css"
+import "./Button.css"
 
 // 1. Define the Interface
 // Extending ComponentPropsWithoutRef ensures all native button attributes are included.

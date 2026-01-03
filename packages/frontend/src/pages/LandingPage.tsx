@@ -1,4 +1,4 @@
-import { ProfileCard } from "../components/ProfileCard"
+import { ProfileList } from "../components/ProfileList"
 import { SearchBar } from "../components/SearchBar"
 import { Sidebar } from "../components/Sidebar"
 import { useValidateUser } from "../utils/hooks"
@@ -13,7 +13,7 @@ export const LandingPage = () => {
             <main className="page-content">
                 <div className="landing-page">
                     <SearchBar />
-                    <ProfileCard />
+                    <ProfileList />
                 </div>
             </main>
         </div>

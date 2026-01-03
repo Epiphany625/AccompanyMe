@@ -2,6 +2,7 @@ import { ChangeEvent, useEffect, useState } from "react"
 import { useUserState, useUserActions } from "../state/user.hooks"
 import { Sidebar } from "../components/Sidebar"
 import Button from "../../design-system/buttons/Button"
+import { ProfileAvatar } from "../../design-system/profiles/ProfileAvatar"
 import axios, { AxiosError } from "axios"
 import { FEMALE, MALE, NON_BINARY, PREFER_NOT_TO_SAY, ROOT } from "../constants"
 import "./PageLayout.css"
@@ -153,13 +154,15 @@ export const UserProfilePage = () => {
 
           <div className="profile-grid">
             <section className="profile-card">
-              <div className="profile-avatar" aria-hidden="true">
+
+              <ProfileAvatar width="150px" fontSize="2.5rem" aria-hidden="true">
                 {profileState.profilePicLink ? (
                   <img src={profileState.profilePicLink} alt="Profile preview" />
                 ) : (
                   <span>RC</span>
                 )}
-              </div>
+              </ProfileAvatar>
+
               <div className="profile-meta">
                 <h2>{profileState.username}</h2>
                 <p>{profileState.description}</p>
