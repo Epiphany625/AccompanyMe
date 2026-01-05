@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface AvailabilityRepository extends JpaRepository<Availability, Long> {
+public interface AvailabilityRepository extends JpaRepository<Availability, UUID> {
     List<Availability> findAllByUserId(UUID userId);
 }

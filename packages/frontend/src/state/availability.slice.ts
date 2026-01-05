@@ -1,23 +1,28 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { AvailabilityRecord } from "../types"
+import { AvailabilityRecord, AvailabilityState } from "../types"
 import { ROOT } from "../constants"
 import axios from "axios"
 
 
-const initialState: AvailabilityRecord[] = []
+const initialState: AvailabilityState = {
+    availabilities: [],
+    forUserId: null // the userId that the loaded availabilities belong to
+}
 
 export const loadAvailabilities = createAsyncThunk<
-    AvailabilityRecord[], // Success payload type (array of AvailabilityRecord)
+    AvailabilityState, // Success payload type (array of AvailabilityRecord)
     { userId: string },   // Argument type (expects an object with userId)
     { rejectValue: string } // Failure payload type (string message)
 >(
     "availability/load",
     async ({ userId }, thunkAPI) => {
+        console.log(`${ROOT}/availabilities/user/${userId}`)
         try {
             const response = await axios.get<AvailabilityRecord[]>(
                 `${ROOT}/availabilities/user/${userId}`
             )
-            return response.data
+            console.log(response.data)
+            return { availabilities: response.data, forUserId: userId }
         } catch (error) {
             const message = axios.isAxiosError(error)
                 ? (error.response?.data?.message ?? error.message)
@@ -102,20 +107,23 @@ const availabilitySlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(loadAvailabilities.fulfilled, (state, action) => {
+                console.log(state)
                 return action.payload
+
             })
             .addCase(addAvailability.fulfilled, (state, action) => {
-                state.push(action.payload)
+                state.availabilities.push(action.payload)
             })
             .addCase(editAvailability.fulfilled, (state, action) => {
                 const updated = action.payload
-                const index = state.findIndex((item) => item.id === updated.id)
+                const index = state.availabilities.findIndex((item) => item.id === updated.id)
                 if (index !== -1) {
-                    state[index] = updated
+                    state.availabilities[index] = updated
                 }
             })
             .addCase(deleteAvailability.fulfilled, (state, action) => {
-                return state.filter((item) => item.id !== action.payload)
+                const records = state.availabilities.filter((item) => item.id !== action.payload)
+                state.availabilities = records;
             })
     }
 })

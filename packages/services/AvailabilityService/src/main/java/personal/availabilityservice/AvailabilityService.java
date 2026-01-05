@@ -27,7 +27,7 @@ public class AvailabilityService {
         return Optional.of(availabilityRepository.save(availability));
     }
 
-    public boolean deleteAvailability(Long availabilityId) {
+    public boolean deleteAvailability(UUID availabilityId) {
         if (availabilityId == null) {
             return false;
         }
@@ -40,7 +40,7 @@ public class AvailabilityService {
         return true;
     }
 
-    public Optional<Availability> updateAvailability(Long availabilityId, Availability availability) {
+    public Optional<Availability> updateAvailability(UUID availabilityId, Availability availability) {
         if (availabilityId == null || availability == null) {
             return Optional.empty();
         }
@@ -61,5 +61,22 @@ public class AvailabilityService {
         record.setDuration(availability.getDuration());
 
         return Optional.of(availabilityRepository.save(record));
+    }
+
+    public Optional<Availability> scheduleAvailability(UUID availabilityId) {
+        if (availabilityId == null) {
+            return Optional.empty();
+        }
+
+        Optional<Availability> existing = availabilityRepository.findById(availabilityId);
+        if (existing.isEmpty()) {
+            return Optional.empty();
+        }
+
+        boolean deleted = deleteAvailability(availabilityId);
+        if (!deleted) {
+            return Optional.empty();
+        }
+        return existing;
     }
 }

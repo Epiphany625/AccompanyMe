@@ -25,6 +25,7 @@ export const ProfileList = () => {
                 if (!isMounted) {
                     return
                 }
+                console.log(response.data)
                 setProfiles(response.data.slice(0, 10))
                 setStatus("ready")
             } catch (error: unknown) {

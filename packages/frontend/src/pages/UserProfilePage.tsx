@@ -14,15 +14,19 @@ import { useValidateUser } from "../utils/hooks"
 
 
 type UserProfileState = {
-  username: string
-  birthYear: string
-  description: string
-  gender?: string | null
-  photoFile?: File | null
+  userId: string,
+  email: string,
+  username: string,
+  birthYear: string,
+  description: string,
+  gender?: string | null,
+  photoFile?: File | null,
   profilePicLink?: string | null
 }
 
 const EMPTY_PROFILE: UserProfileState = {
+  userId: "",
+  email: "",
   username: "",
   birthYear: "",
   description: "",
@@ -64,7 +68,7 @@ export const UserProfilePage = () => {
       const response = await axios.get<UserProfileState>(`${ROOT}/user/${userId}`);
 
 
-      const { gender, birthYear, description, profilePicLink } = response.data;
+      const { gender, birthYear, description, profilePicLink, email } = response.data;
 
       const resultObj: UserProfileState = {
         ...profileState,
@@ -72,7 +76,9 @@ export const UserProfilePage = () => {
         gender: gender,
         birthYear: birthYear,
         description: description,
-        profilePicLink: profilePicLink
+        profilePicLink: profilePicLink,
+        email: email,
+        userId: userId ?? ""
       }
 
       setProfileState(resultObj);
@@ -190,7 +196,7 @@ export const UserProfilePage = () => {
                   <p>Changes are saved to your account once you hit save.</p>
                 </div>
                 <span className={isDirty() ? "profile-pill" : "profile-pill muted"}>
-                  {isDirty() ? "Unsaved changes" : "All changes saved"}
+                  {isDirty() ? "Unsaved changes" : "Saved"}
                 </span>
               </div>
 
@@ -230,6 +236,20 @@ export const UserProfilePage = () => {
                   type="text"
                   value={profileState.username ?? ""}
                   onChange={(event) => handleChange("username", event.target.value)}
+                />
+              </div>
+
+              <div className="ds-field">
+                <label className="ds-label" htmlFor="email">
+                  Email
+                </label>
+                <input
+                  className="ds-input"
+                  id="email"
+                  type="email"
+                  value={profileState.email ?? ""}
+                  readOnly
+                  disabled
                 />
               </div>
 

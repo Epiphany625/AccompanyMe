@@ -18,7 +18,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://localhost:5173", "http://localhost:5173")
+                .allowedOrigins("https://localhost:5173", "http://localhost:5173", "https://localhost:4173",
+                        "http://localhost:4173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
@@ -28,7 +29,8 @@ public class WebConfig implements WebMvcConfigurer {
     public FilterRegistrationBean<CorsFilter> corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("https://localhost:5173",
-                "http://localhost:5173"));
+                "http://localhost:5173", "https://localhost:4173",
+                "http://localhost:4173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE",
                 "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

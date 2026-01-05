@@ -2,6 +2,9 @@ package personal.appointmentservice;
 
 import org.springframework.stereotype.Service;
 
+import personal.appointmentservice.clients.AvailabilityClient;
+import personal.appointmentservice.dtos.AvailabilityResponseDto;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,9 +12,11 @@ import java.util.UUID;
 @Service
 public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
+    private final AvailabilityClient availabilityClient;
 
-    public AppointmentService(AppointmentRepository appointmentRepository) {
+    public AppointmentService(AppointmentRepository appointmentRepository, AvailabilityClient availabilityClient) {
         this.appointmentRepository = appointmentRepository;
+        this.availabilityClient = availabilityClient;
     }
 
     public List<Appointment> getAppointmentsByUserId(UUID userId) {
@@ -31,8 +36,12 @@ public class AppointmentService {
     }
 
     public Optional<Appointment> updateAppointment(UUID appointmentId, Appointment updates) {
-        if (appointmentId == null || !isValidAppointment(updates)) {
-            return Optional.empty();
+        if (appointmentId == null) {
+            throw new IllegalArgumentException("Appointment id is required.");
+        }
+
+        if (!isValidAppointment(updates)) {
+            throw new IllegalArgumentException("Invalid appointment update.");
         }
 
         Optional<Appointment> existing = appointmentRepository.findById(appointmentId);
@@ -68,6 +77,11 @@ public class AppointmentService {
         return Optional.of(appointmentRepository.save(record));
     }
 
+    public AvailabilityResponseDto scheduleAppointmentBasedOnAvailability(UUID availabilityId) {
+        AvailabilityResponseDto scheduledAvailability = availabilityClient.scheduleByAvailabilityId(availabilityId);
+        return scheduledAvailability;
+    }
+
     private boolean isValidAppointment(Appointment appointment) {
         if (appointment == null) {
             return false;
@@ -85,6 +99,9 @@ public class AppointmentService {
         }
 
         String status = appointment.getStatus().toLowerCase();
-        return status.equals("confirmed") || status.equals("completed") || status.equals("cancelled");
+        return status.equals("confirmed")
+                || status.equals("completed")
+                || status.equals("cancelled")
+                || status.equals("pending");
     }
 }

@@ -48,7 +48,7 @@ public class Appointment {
     private String mode;
 
     @NotNull
-    @Pattern(regexp = "confirmed|completed|cancelled")
+    @Pattern(regexp = "confirmed|completed|cancelled|pending")
     @Column(nullable = false)
     private String status;
 
@@ -69,8 +69,7 @@ public class Appointment {
             String location,
             String mode,
             String status,
-            String notes
-    ) {
+            String notes) {
         this.id = id;
         this.userId = userId;
         this.clientUserId = clientUserId;

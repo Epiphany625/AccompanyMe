@@ -27,16 +27,16 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserByUserId(@PathVariable UUID userId) {
-        Optional<User> user = userService.getUserByUserId(userId);
-        if (user.isEmpty()) {
+        UserWithAuthInfo user = userService.getUserByUserId(userId);
+        if (user == null) {
             return new ResponseEntity<>(Map.of("message", "User not found"), HttpStatus.NOT_FOUND);
         }
 
-        return ResponseEntity.ok(user.get());
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/profiles")
-    public ResponseEntity<List<User>> getRecentProfiles(@RequestParam(defaultValue = "10") int limit) {
+    public ResponseEntity<List<UserWithAuthInfo>> getRecentProfiles(@RequestParam(defaultValue = "10") int limit) {
         int safeLimit = Math.min(Math.max(limit, 1), 10);
         return ResponseEntity.ok(userService.getRecentUsers(safeLimit));
     }

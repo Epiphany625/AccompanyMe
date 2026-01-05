@@ -23,7 +23,7 @@ const toDatetimeLocalValue = (raw: string) => {
 
 export const UserAvailabilityList = () => {
     const { userId } = useUserState()
-    const [availabilities, setAvailabilities] = useState<AvailabilityRecord[]>([])
+    // const [availabilities, setAvailabilities] = useState<AvailabilityRecord[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [deletingIds, setDeletingIds] = useState<number[]>([])
@@ -32,10 +32,12 @@ export const UserAvailabilityList = () => {
     const [isSaving, setIsSaving] = useState(false)
 
     const availabilityAction = useAvailabilityActions()
-    const availabilityState = useAvailabilityState()
+    const { availabilities, forUserId } = useAvailabilityState()
 
     useEffect(() => {
+        console.log(availabilities.length)
         if (!userId) {
+            console.log('no userid')
             return
         }
 
@@ -44,11 +46,10 @@ export const UserAvailabilityList = () => {
             setIsLoading(true)
             setErrorMessage(null)
             try {
-                if (availabilityState.length == 0) {
-                    await availabilityAction.loadAvailabilities(userId).unwrap()
+                if (availabilities.length === 0 || forUserId !== userId) {
+                    const response = await availabilityAction.loadAvailabilities(userId).unwrap()
+
                 }
-                console.log(availabilityState)
-                setAvailabilities(availabilityState)
             } catch (error: unknown) {
                 setErrorMessage(typeof error === "string" ? error : "Unable to load availabilities. Please try again.");
             } finally {
@@ -63,14 +64,14 @@ export const UserAvailabilityList = () => {
         return () => {
             isActive = false
         }
-    }, [userId, availabilityAction])
+    }, [userId])
 
     const handleDelete = async (availabilityId: number) => {
         setErrorMessage(null)
         setDeletingIds((prev) => [...prev, availabilityId])
         try {
             await availabilityAction.deleteAvailability(availabilityId).unwrap()
-            setAvailabilities((prev) => prev.filter((item) => item.id !== availabilityId))
+            // setAvailabilities((prev) => prev.filter((item) => item.id !== availabilityId))
         } catch (error: unknown) {
             setErrorMessage(typeof error === "string" ? error : "Unable to delete availability.")
         } finally {
@@ -128,9 +129,9 @@ export const UserAvailabilityList = () => {
             const response = await availabilityAction
                 .editAvailability(availabilityId, userId, parsedStart.toISOString(), durationValue)
                 .unwrap()
-            setAvailabilities((prev) =>
-                prev.map((item) => (item.id === availabilityId ? response : item))
-            )
+            // setAvailabilities((prev) =>
+            //     prev.map((item) => (item.id === availabilityId ? response : item))
+            // )
             cancelEditing()
         } catch (error: unknown) {
             setErrorMessage(typeof error === "string" ? error : "Unable to update availability.")

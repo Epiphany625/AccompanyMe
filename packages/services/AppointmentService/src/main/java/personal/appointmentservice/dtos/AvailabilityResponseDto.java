@@ -1,33 +1,18 @@
-package personal.availabilityservice;
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
+package personal.appointmentservice.dtos;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "availability")
-public class Availability {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+public class AvailabilityResponseDto {
     private UUID id;
-
-    @Column(name = "user_id", nullable = false)
-    private UUID userId; // from AuthService
-
-    @Column(nullable = false)
+    private UUID userId;
     private OffsetDateTime startTime;
-
-    @Column(nullable = false)
-    @Min(1)
     private Long duration;
 
-    public Availability() {
-        // Default constructor
+    public AvailabilityResponseDto() {
     }
 
-    public Availability(UUID id, UUID userId, OffsetDateTime startTime, Long duration) {
+    public AvailabilityResponseDto(UUID id, UUID userId, OffsetDateTime startTime, Long duration) {
         this.id = id;
         this.userId = userId;
         this.startTime = startTime;
@@ -54,7 +39,7 @@ public class Availability {
         return startTime;
     }
 
-    public void setstartTime(OffsetDateTime startTime) {
+    public void setStartTime(OffsetDateTime startTime) {
         this.startTime = startTime;
     }
 

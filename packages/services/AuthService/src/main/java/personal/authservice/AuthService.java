@@ -72,6 +72,10 @@ public class AuthService {
         return user;
     }
 
+    public Optional<Auth> getAuthById(UUID id) {
+        return authRepository.findById(id);
+    }
+
     public ResponseCookie generateCookie(UUID id) {
         String token = jwtUtils.generateTokenFromUserId(id);
 

@@ -3,6 +3,7 @@ package personal.userservice;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -11,13 +12,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final AuthClient authClient;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, AuthClient authClient) {
         this.userRepository = userRepository;
+        this.authClient = authClient;
     }
 
-    public Optional<User> getUserByUserId(UUID userId) {
-        return userRepository.findByUserId(userId);
+    public UserWithAuthInfo getUserByUserId(UUID userId) {
+        User user = userRepository.findByUserId(userId).orElse(null);
+        if (user != null) {
+            AuthResponseDto authInfo = authClient.getAuthInfoFromUserId(userId);
+            return new UserWithAuthInfo(user.getId(), user.getUserId(), user.getGender(),
+                    user.getBirthYear(), user.getDescription(), user.getRegistrationDate(), user.getProfilePicLink(),
+                    authInfo.getUsername(), authInfo.getEmail());
+        }
+        return null;
     }
 
     public Optional<User> createUser(User user) {
@@ -63,9 +73,18 @@ public class UserService {
         return Optional.of(userRepository.save(user));
     }
 
-    public List<User> getRecentUsers(int limit) {
-        return userRepository
+    public List<UserWithAuthInfo> getRecentUsers(int limit) {
+        List<User> users = userRepository
                 .findAll(PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "registrationDate")))
                 .getContent();
+
+        return users.stream()
+                .map(user -> {
+                    AuthResponseDto authInfo = authClient.getAuthInfoFromUserId(user.getUserId());
+                    return new UserWithAuthInfo(user.getId(), user.getUserId(), user.getGender(),
+                            user.getBirthYear(), user.getDescription(), user.getRegistrationDate(),
+                            user.getProfilePicLink(), authInfo.getUsername(), authInfo.getEmail());
+                })
+                .collect(Collectors.toList());
     }
 }

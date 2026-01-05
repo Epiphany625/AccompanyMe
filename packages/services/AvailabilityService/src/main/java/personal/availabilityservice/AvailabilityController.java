@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 @RestController
 @RequestMapping("/availabilities")
 public class AvailabilityController {
@@ -34,7 +37,7 @@ public class AvailabilityController {
     }
 
     @DeleteMapping("/{availabilityId}")
-    public ResponseEntity<?> deleteAvailability(@PathVariable Long availabilityId) {
+    public ResponseEntity<?> deleteAvailability(@PathVariable UUID availabilityId) {
         boolean deleted = availabilityService.deleteAvailability(availabilityId);
         if (!deleted) {
             return new ResponseEntity<>(Map.of("message", "Availability not found"), HttpStatus.NOT_FOUND);
@@ -45,9 +48,8 @@ public class AvailabilityController {
 
     @PutMapping("/{availabilityId}")
     public ResponseEntity<?> updateAvailability(
-            @PathVariable Long availabilityId,
-            @RequestBody Availability availability
-    ) {
+            @PathVariable UUID availabilityId,
+            @RequestBody Availability availability) {
         Optional<Availability> updated = availabilityService.updateAvailability(availabilityId, availability);
         if (updated.isEmpty()) {
             return new ResponseEntity<>(Map.of("message", "Invalid availability update"), HttpStatus.BAD_REQUEST);
@@ -55,4 +57,15 @@ public class AvailabilityController {
 
         return ResponseEntity.ok(updated.get());
     }
+
+    @PostMapping("schedule/{availabilityId}")
+    public ResponseEntity<?> scheduleAppointmentByAvailabilityId(@PathVariable UUID availabilityId) {
+        Optional<Availability> existing = availabilityService.scheduleAvailability(availabilityId);
+        if (existing.isEmpty()) {
+            return new ResponseEntity<>(Map.of("message", "Availability not found"), HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(existing.get());
+    }
+
 }

@@ -15,10 +15,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import personal.authservice.Jwt.JwtUtils;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 class SigninDto {
     private String email;
@@ -128,6 +130,18 @@ public class AuthController {
 
     public AuthController(AuthService authService) {
         this.authService = authService;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getAuthInfoById(@PathVariable UUID id) {
+        Optional<Auth> authInfo = authService.getAuthById(id);
+        if (authInfo.isEmpty()) {
+            return new ResponseEntity<>(Map.of("message", "User not found"), HttpStatus.NOT_FOUND);
+        }
+
+        Auth user = authInfo.get();
+        AuthResponse response = new AuthResponse(user.getId(), user.getEmail(), user.getUsername());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/signup")

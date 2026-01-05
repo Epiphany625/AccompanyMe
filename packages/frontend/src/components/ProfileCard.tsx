@@ -8,15 +8,15 @@ type ProfileCardProps = {
 }
 
 export const ProfileCard = ({ profile, onClick }: ProfileCardProps) => {
-    const shortId = profile.userId ? profile.userId.slice(0, 8) : "member"
-    const avatarFallback = profile.userId ? profile.userId.slice(0, 2).toUpperCase() : "ME"
+    const username = profile.username.slice(0, 15)
+    const avatarFallback = profile.userId.slice(0, 2).toUpperCase()
     const description = profile.description?.trim() || "No bio yet."
 
     return (
         <button
             type="button"
             className="profile-card"
-            aria-label={`Open profile ${shortId}`}
+            aria-label={`Open profile ${username}`}
             onClick={onClick}
         >
 
@@ -30,7 +30,7 @@ export const ProfileCard = ({ profile, onClick }: ProfileCardProps) => {
 
 
             <div className="profile-card__body">
-                <div className="profile-card__title">Member {shortId}</div>
+                <div className="profile-card__title">{username}</div>
                 <p className="profile-card__description">{description}</p>
                 <div className="profile-card__meta">
                     <span>Born {profile.birthYear}</span>
