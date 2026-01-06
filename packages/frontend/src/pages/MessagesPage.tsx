@@ -1,18 +1,15 @@
 import { useState } from "react"
 import { Sidebar } from "../components/Sidebar"
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { useValidateUser } from "../utils/hooks";
+import TextField from "@mui/material/TextField"
+import Autocomplete from "@mui/material/Autocomplete"
+import { useValidateUser } from "../utils/hooks"
 import "./PageLayout.css"
 
-
 export const MessagesPage = () => {
+  useValidateUser()
 
-  useValidateUser();
-
-  const options = ['The Godfather', 'Pulp Fiction'];
-  const [selectedMovie, setSelectedMovie] = useState<string | null>(null);
-
+  const options = ["The Godfather", "Pulp Fiction"]
+  const [selectedMovie, setSelectedMovie] = useState<string | null>(null)
 
   return (
     <div className="page-shell">
@@ -20,7 +17,10 @@ export const MessagesPage = () => {
       <main className="page-content">
         <section className="page-panel">
           <h1>Messages</h1>
-          <p>Review your conversations and keep the momentum going. {selectedMovie}</p>
+          <p>
+            Review your conversations and keep the momentum going.{" "}
+            {selectedMovie}
+          </p>
 
           <Autocomplete
             disablePortal
@@ -28,7 +28,7 @@ export const MessagesPage = () => {
             value={selectedMovie}
             onChange={(_, newValue) => setSelectedMovie(newValue)}
             sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Movie" />}
+            renderInput={params => <TextField {...params} label="Movie" />}
           />
         </section>
       </main>

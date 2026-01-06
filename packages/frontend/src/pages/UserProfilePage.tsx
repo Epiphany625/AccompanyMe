@@ -11,16 +11,14 @@ import { useNavigate } from "react-router-dom"
 import { logger } from "../utils/logger"
 import { useValidateUser } from "../utils/hooks"
 
-
-
 type UserProfileState = {
-  userId: string,
-  email: string,
-  username: string,
-  birthYear: string,
-  description: string,
-  gender?: string | null,
-  photoFile?: File | null,
+  userId: string
+  email: string
+  username: string
+  birthYear: string
+  description: string
+  gender?: string | null
+  photoFile?: File | null
   profilePicLink?: string | null
 }
 
@@ -37,81 +35,81 @@ const EMPTY_PROFILE: UserProfileState = {
 const CURRENT_YEAR = new Date().getFullYear()
 
 export const UserProfilePage = () => {
-  const [initialState, setInitialState] = useState<UserProfileState>(EMPTY_PROFILE);
-  const [profileState, setProfileState] = useState<UserProfileState>(EMPTY_PROFILE)
-  const navigate = useNavigate();
-  const userAction = useUserActions();
-  useValidateUser();
+  const [initialState, setInitialState] =
+    useState<UserProfileState>(EMPTY_PROFILE)
+  const [profileState, setProfileState] =
+    useState<UserProfileState>(EMPTY_PROFILE)
+  const navigate = useNavigate()
+  const userAction = useUserActions()
+  useValidateUser()
 
-  const { username, userId } = useUserState();
+  const { username, userId } = useUserState()
   logger.info("here", userId)
-  logger.info("username and userid: ", username, userId);
+  logger.info("username and userid: ", username, userId)
 
   const isDirty = () => {
-    return !(initialState.username === profileState.username
-      && initialState.birthYear === profileState.birthYear
-      && initialState.description === profileState.description
-      && initialState.gender === profileState.gender
-      && initialState.photoFile === profileState.photoFile
+    return !(
+      initialState.username === profileState.username &&
+      initialState.birthYear === profileState.birthYear &&
+      initialState.description === profileState.description &&
+      initialState.gender === profileState.gender &&
+      initialState.photoFile === profileState.photoFile
     )
   }
 
   const logOut = () => {
-    userAction.logOut();
-    navigate("/auth");
+    userAction.logOut()
+    navigate("/auth")
   }
-
 
   const retrieveUserProfile = async () => {
     try {
+      const response = await axios.get<UserProfileState>(
+        `${ROOT}/user/${userId}`,
+      )
 
-      const response = await axios.get<UserProfileState>(`${ROOT}/user/${userId}`);
-
-
-      const { gender, birthYear, description, profilePicLink, email } = response.data;
+      const { gender, birthYear, description, profilePicLink, email } =
+        response.data
 
       const resultObj: UserProfileState = {
         ...profileState,
-        username: username ?? "", // if code reaches this stage, username will never be null. this is just for syntax. 
+        username: username ?? "", // if code reaches this stage, username will never be null. this is just for syntax.
         gender: gender,
         birthYear: birthYear,
         description: description,
         profilePicLink: profilePicLink,
         email: email,
-        userId: userId ?? ""
+        userId: userId ?? "",
       }
 
-      setProfileState(resultObj);
+      setProfileState(resultObj)
 
-      setInitialState(resultObj);
-
-
+      setInitialState(resultObj)
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message?: string }>;
+        const axiosError = error as AxiosError<{ message?: string }>
 
-        const status = axiosError.response?.status;
+        const status = axiosError.response?.status
 
         if (status === 401) {
           // unauthorized
-          await logOut();
-          return;
+          await logOut()
+          return
         }
 
         console.error(
           "Failed to fetch user:",
-          axiosError.response?.data?.message ?? axiosError.message
-        );
+          axiosError.response?.data?.message ?? axiosError.message,
+        )
       } else {
-        console.error("Unknown error:", error);
+        console.error("Unknown error:", error)
       }
     }
-  };
+  }
 
   useEffect(() => {
-    retrieveUserProfile();
+    retrieveUserProfile()
   }, [username, userId])
-
 
   useEffect(() => {
     if (!profileState.photoFile) {
@@ -120,7 +118,7 @@ export const UserProfilePage = () => {
 
     const objectUrl = URL.createObjectURL(profileState.photoFile)
 
-    setProfileState((prev) => ({ ...prev, profilePicLink: objectUrl }))
+    setProfileState(prev => ({ ...prev, profilePicLink: objectUrl }))
 
     return () => {
       URL.revokeObjectURL(objectUrl)
@@ -128,12 +126,12 @@ export const UserProfilePage = () => {
   }, [profileState.photoFile])
 
   const handleChange = (field: keyof UserProfileState, value: string) => {
-    setProfileState((prev) => ({ ...prev, [field]: value }))
+    setProfileState(prev => ({ ...prev, [field]: value }))
   }
 
   const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null
-    setProfileState((prev) => ({ ...prev, photoFile: file }))
+    setProfileState(prev => ({ ...prev, photoFile: file }))
   }
 
   const handleReset = () => {
@@ -160,10 +158,12 @@ export const UserProfilePage = () => {
 
           <div className="profile-grid">
             <section className="profile-card">
-
               <ProfileAvatar width="150px" fontSize="2.5rem" aria-hidden="true">
                 {profileState.profilePicLink ? (
-                  <img src={profileState.profilePicLink} alt="Profile preview" />
+                  <img
+                    src={profileState.profilePicLink}
+                    alt="Profile preview"
+                  />
                 ) : (
                   <span>RC</span>
                 )}
@@ -195,7 +195,9 @@ export const UserProfilePage = () => {
                   <h2>Edit your information</h2>
                   <p>Changes are saved to your account once you hit save.</p>
                 </div>
-                <span className={isDirty() ? "profile-pill" : "profile-pill muted"}>
+                <span
+                  className={isDirty() ? "profile-pill" : "profile-pill muted"}
+                >
                   {isDirty() ? "Unsaved changes" : "Saved"}
                 </span>
               </div>
@@ -235,7 +237,9 @@ export const UserProfilePage = () => {
                   id="displayName"
                   type="text"
                   value={profileState.username ?? ""}
-                  onChange={(event) => handleChange("username", event.target.value)}
+                  onChange={event =>
+                    handleChange("username", event.target.value)
+                  }
                 />
               </div>
 
@@ -265,7 +269,9 @@ export const UserProfilePage = () => {
                     min="1900"
                     max={CURRENT_YEAR}
                     value={profileState.birthYear}
-                    onChange={(event) => handleChange("birthYear", event.target.value)}
+                    onChange={event =>
+                      handleChange("birthYear", event.target.value)
+                    }
                   />
                 </div>
                 <div className="ds-field">
@@ -276,7 +282,9 @@ export const UserProfilePage = () => {
                     className="ds-input ds-input--select"
                     id="gender"
                     value={profileState.gender ?? PREFER_NOT_TO_SAY}
-                    onChange={(event) => handleChange("gender", event.target.value)}
+                    onChange={event =>
+                      handleChange("gender", event.target.value)
+                    }
                   >
                     <option>{MALE}</option>
                     <option>{FEMALE}</option>
@@ -295,9 +303,13 @@ export const UserProfilePage = () => {
                   id="description"
                   rows={4}
                   value={profileState.description}
-                  onChange={(event) => handleChange("description", event.target.value)}
+                  onChange={event =>
+                    handleChange("description", event.target.value)
+                  }
                 />
-                <div className="ds-help">A short intro that appears on your card.</div>
+                <div className="ds-help">
+                  A short intro that appears on your card.
+                </div>
               </div>
 
               <div className="profile-actions">
@@ -312,11 +324,7 @@ export const UserProfilePage = () => {
                 <Button type="button" variant="primary">
                   Save changes
                 </Button>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={logOut}
-                >
+                <Button type="button" variant="secondary" onClick={logOut}>
                   Log Out
                 </Button>
               </div>

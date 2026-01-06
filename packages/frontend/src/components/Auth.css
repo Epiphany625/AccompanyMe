@@ -10,7 +10,6 @@
   max-width: 640px;
 }
 
-
 .auth-switch {
   display: flex;
   gap: var(--space-1);

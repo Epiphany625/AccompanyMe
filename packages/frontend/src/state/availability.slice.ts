@@ -3,128 +3,126 @@ import { AvailabilityRecord, AvailabilityState } from "../types"
 import { ROOT } from "../constants"
 import axios from "axios"
 
-
 const initialState: AvailabilityState = {
-    availabilities: [],
-    forUserId: null // the userId that the loaded availabilities belong to
+  availabilities: [],
+  forUserId: null, // the userId that the loaded availabilities belong to
 }
 
 export const loadAvailabilities = createAsyncThunk<
-    AvailabilityState, // Success payload type (array of AvailabilityRecord)
-    { userId: string },   // Argument type (expects an object with userId)
-    { rejectValue: string } // Failure payload type (string message)
->(
-    "availability/load",
-    async ({ userId }, thunkAPI) => {
-        console.log(`${ROOT}/availabilities/user/${userId}`)
-        try {
-            const response = await axios.get<AvailabilityRecord[]>(
-                `${ROOT}/availabilities/user/${userId}`
-            )
-            console.log(response.data)
-            return { availabilities: response.data, forUserId: userId }
-        } catch (error) {
-            const message = axios.isAxiosError(error)
-                ? (error.response?.data?.message ?? error.message)
-                : "Availability load failed. Please try again. "
-            return thunkAPI.rejectWithValue(message)
-        }
-    }
-)
+  AvailabilityState, // Success payload type (array of AvailabilityRecord)
+  { userId: string }, // Argument type (expects an object with userId)
+  { rejectValue: string } // Failure payload type (string message)
+>("availability/load", async ({ userId }, thunkAPI) => {
+  console.log(`${ROOT}/availabilities/user/${userId}`)
+  try {
+    const response = await axios.get<AvailabilityRecord[]>(
+      `${ROOT}/availabilities/user/${userId}`,
+    )
+    console.log(response.data)
+    return { availabilities: response.data, forUserId: userId }
+  } catch (error) {
+    const message = axios.isAxiosError(error)
+      ? (error.response?.data?.message ?? error.message)
+      : "Availability load failed. Please try again. "
+    return thunkAPI.rejectWithValue(message)
+  }
+})
 
 export const addAvailability = createAsyncThunk<
-    AvailabilityRecord, // Success payload type (AvailabilityRecord)
-    { userId: string, startTime: string, duration: number },   // Argument type (expects an object with userId)
-    { rejectValue: string } // Failure payload type (string message)
->(
-    "availability/add",
-    async ({ userId, startTime, duration }, thunkAPI) => {
-        try {
-            const response = await axios.post(`${ROOT}/availabilities`, {
-                userId,
-                startTime,
-                duration,
-            })
-            return response.data
-        } catch (error) {
-            const message = axios.isAxiosError(error)
-                ? (error.response?.data?.message ?? error.message)
-                : "Add availability failed. Please try again. "
-            return thunkAPI.rejectWithValue(message)
-        }
-    }
-)
+  AvailabilityRecord, // Success payload type (AvailabilityRecord)
+  { userId: string; startTime: string; duration: number }, // Argument type (expects an object with userId)
+  { rejectValue: string } // Failure payload type (string message)
+>("availability/add", async ({ userId, startTime, duration }, thunkAPI) => {
+  try {
+    const response = await axios.post(`${ROOT}/availabilities`, {
+      userId,
+      startTime,
+      duration,
+    })
+    return response.data
+  } catch (error) {
+    const message = axios.isAxiosError(error)
+      ? (error.response?.data?.message ?? error.message)
+      : "Add availability failed. Please try again. "
+    return thunkAPI.rejectWithValue(message)
+  }
+})
 
 export const editAvailability = createAsyncThunk<
-    AvailabilityRecord, // Success payload type (updated AvailabilityRecord)
-    { availabilityId: number, userId: string, startTime: string, duration: number }, // Argument type
-    { rejectValue: string } // Failure payload type (string message)
+  AvailabilityRecord, // Success payload type (updated AvailabilityRecord)
+  {
+    availabilityId: number
+    userId: string
+    startTime: string
+    duration: number
+  }, // Argument type
+  { rejectValue: string } // Failure payload type (string message)
 >(
-    "availability/edit",
-    async ({ availabilityId, userId, startTime, duration }, thunkAPI) => {
-        try {
-            const response = await axios.put<AvailabilityRecord>(
-                `${ROOT}/availabilities/${availabilityId}`,
-                {
-                    userId,
-                    startTime,
-                    duration,
-                }
-            )
-            return response.data
-        } catch (error) {
-            const message = axios.isAxiosError(error)
-                ? (error.response?.data?.message ?? error.message)
-                : "Edit availability failed. Please try again. "
-            return thunkAPI.rejectWithValue(message)
-        }
+  "availability/edit",
+  async ({ availabilityId, userId, startTime, duration }, thunkAPI) => {
+    try {
+      const response = await axios.put<AvailabilityRecord>(
+        `${ROOT}/availabilities/${availabilityId}`,
+        {
+          userId,
+          startTime,
+          duration,
+        },
+      )
+      return response.data
+    } catch (error) {
+      const message = axios.isAxiosError(error)
+        ? (error.response?.data?.message ?? error.message)
+        : "Edit availability failed. Please try again. "
+      return thunkAPI.rejectWithValue(message)
     }
+  },
 )
 
 export const deleteAvailability = createAsyncThunk<
-    number, // Success payload type (deleted availability id)
-    { availabilityId: number }, // Argument type
-    { rejectValue: string } // Failure payload type (string message)
->(
-    "availability/delete",
-    async ({ availabilityId }, thunkAPI) => {
-        try {
-            await axios.delete(`${ROOT}/availabilities/${availabilityId}`)
-            return availabilityId
-        } catch (error) {
-            const message = axios.isAxiosError(error)
-                ? (error.response?.data?.message ?? error.message)
-                : "Delete availability failed. Please try again. "
-            return thunkAPI.rejectWithValue(message)
-        }
-    }
-)
+  number, // Success payload type (deleted availability id)
+  { availabilityId: number }, // Argument type
+  { rejectValue: string } // Failure payload type (string message)
+>("availability/delete", async ({ availabilityId }, thunkAPI) => {
+  try {
+    await axios.delete(`${ROOT}/availabilities/${availabilityId}`)
+    return availabilityId
+  } catch (error) {
+    const message = axios.isAxiosError(error)
+      ? (error.response?.data?.message ?? error.message)
+      : "Delete availability failed. Please try again. "
+    return thunkAPI.rejectWithValue(message)
+  }
+})
 
 const availabilitySlice = createSlice({
-    name: "availabilityState",
-    initialState: initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(loadAvailabilities.fulfilled, (state, action) => {
-                console.log(state)
-                return action.payload
-
-            })
-            .addCase(addAvailability.fulfilled, (state, action) => {
-                state.availabilities.push(action.payload)
-            })
-            .addCase(editAvailability.fulfilled, (state, action) => {
-                const updated = action.payload
-                const index = state.availabilities.findIndex((item) => item.id === updated.id)
-                if (index !== -1) {
-                    state.availabilities[index] = updated
-                }
-            })
-            .addCase(deleteAvailability.fulfilled, (state, action) => {
-                const records = state.availabilities.filter((item) => item.id !== action.payload)
-                state.availabilities = records;
-            })
-    }
+  name: "availabilityState",
+  initialState: initialState,
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(loadAvailabilities.fulfilled, (state, action) => {
+        console.log(state)
+        return action.payload
+      })
+      .addCase(addAvailability.fulfilled, (state, action) => {
+        state.availabilities.push(action.payload)
+      })
+      .addCase(editAvailability.fulfilled, (state, action) => {
+        const updated = action.payload
+        const index = state.availabilities.findIndex(
+          item => item.id === updated.id,
+        )
+        if (index !== -1) {
+          state.availabilities[index] = updated
+        }
+      })
+      .addCase(deleteAvailability.fulfilled, (state, action) => {
+        const records = state.availabilities.filter(
+          item => item.id !== action.payload,
+        )
+        state.availabilities = records
+      })
+  },
 })
-export const availabilityReducer = availabilitySlice.reducer;
+export const availabilityReducer = availabilitySlice.reducer

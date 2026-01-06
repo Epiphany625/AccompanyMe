@@ -8,10 +8,10 @@ import { AiChatPage } from "./pages/AiChatPage"
 import { UserProfilePage } from "./pages/UserProfilePage"
 import { AppointmentsPage } from "./pages/AppointmentsPage"
 
-// Store: global state. 
-// 
+// Store: global state.
+//
 export const App = () => {
-  axios.defaults.withCredentials = true; // every request requires an authentication
+  axios.defaults.withCredentials = true // every request requires an authentication
   return (
     <Routes>
       <Route path="/auth" element={<AuthPage />} />

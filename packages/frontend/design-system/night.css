@@ -14,7 +14,6 @@
     --brand-soft: #5b2f2a;
     --brand-ink: #ffd2ba;
 
-
     --background-soft: var(--brand-soft);
     --background-strong: var(--brand-strong);
 
@@ -57,5 +56,4 @@
   --shadow-soft: 0 16px 34px rgba(10, 6, 7, 0.55);
   --shadow-lift: 0 20px 40px rgba(8, 6, 7, 0.6);
   --ring: 0 0 0 3px rgba(255, 140, 122, 0.35);
-
 }

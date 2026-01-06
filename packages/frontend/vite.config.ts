@@ -11,11 +11,15 @@ export default defineConfig({
   server: {
     open: true,
     https: {
-      key: fs.readFileSync(path.join(import.meta.dirname, "certs", "localhost-key.pem")), // for https certificate
-      cert: fs.readFileSync(path.join(import.meta.dirname, "certs", "localhost.pem")), // for https certificate
+      key: fs.readFileSync(
+        path.join(import.meta.dirname, "certs", "localhost-key.pem"),
+      ), // for https certificate
+      cert: fs.readFileSync(
+        path.join(import.meta.dirname, "certs", "localhost.pem"),
+      ), // for https certificate
     },
-    host: 'localhost',
-    port: 5173
+    host: "localhost",
+    port: 5173,
   },
 
   test: {

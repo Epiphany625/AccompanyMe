@@ -1,66 +1,67 @@
-import { MALE, FEMALE, NON_BINARY, PREFER_NOT_TO_SAY } from "./constants";
+import { MALE, FEMALE, NON_BINARY, PREFER_NOT_TO_SAY } from "./constants"
 
 export type Gender =
-    | typeof MALE
-    | typeof FEMALE
-    | typeof NON_BINARY
-    | typeof PREFER_NOT_TO_SAY;
-
+  | typeof MALE
+  | typeof FEMALE
+  | typeof NON_BINARY
+  | typeof PREFER_NOT_TO_SAY
 
 export type AvailabilityRecord = {
-    id: number
-    userId: string
-    startTime: string
-    duration: number
+  id: number
+  userId: string
+  startTime: string
+  duration: number
 }
-
 
 export type AvailabilityFormState = {
-    startTime: string
-    duration: string
+  startTime: string
+  duration: string
 }
 
-
 export type UserProfile = {
-    id: string
-    userId: string
-    username: string
-    gender: string
-    birthYear: number
-    description: string
-    profilePicLink?: string | null
+  id: string
+  userId: string
+  username: string
+  gender: string
+  birthYear: number
+  description: string
+  profilePicLink?: string | null
 }
 // redux state definitions
 export interface UserState {
-    userId: string | null,
-    username: string | null,
-    email: string | null
+  userId: string | null
+  username: string | null
+  email: string | null
 }
 export interface AvailabilityState {
-    availabilities: AvailabilityRecord[]
-    forUserId: string | null
+  availabilities: AvailabilityRecord[]
+  forUserId: string | null
 }
 
 // request data structures
 export interface AppointmentRequest {
-    userId: string // owner
-    clientUserId: string // client
-    status: AppointmentStatus // TODO. needs further value constraints. 
-    location?: string
-    mode?: string
-    notes?: string | null
+  userId: string // owner
+  clientUserId: string // client
+  status: AppointmentStatus // TODO. needs further value constraints.
+  location?: string
+  mode?: string
+  notes?: string | null
 }
 
-export type AppointmentStatus = "confirmed" | "completed" | "cancelled" | "pending"
+export type AppointmentStatus =
+  | "confirmed"
+  | "completed"
+  | "cancelled"
+  | "pending"
 
 export type AppointmentRecord = {
-    id: string
-    userId: string
-    clientUserId: string
-    appointmentTime: string
-    duration: number
-    location: string
-    mode: string
-    status: AppointmentStatus
-    notes?: string | null
+  id: string
+  userId: string
+  clientUserId: string
+  appointmentTime: string
+  duration: number
+  location: string
+  mode: string
+  status: AppointmentStatus
+  notes?: string | null
 }

@@ -17,7 +17,10 @@
   font-weight: 600;
   letter-spacing: 0.2px;
   padding: 10px 18px;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
   min-height: 38px;
   font-size: 0.95rem;
 }
