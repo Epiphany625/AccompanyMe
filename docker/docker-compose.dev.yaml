@@ -1,0 +1,153 @@
+services:
+  postgres:
+    container_name: accompanyMe_postgres_db
+    image: postgres
+    environment:
+      POSTGRES_USER: xinyangxu-2023@outlook.com
+      POSTGRES_PASSWORD: xinyangxu
+      POSTGRES_DB: accompanyme
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: accompanyMe_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: accompanyMe_zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - postgres
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: accompanyMe_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - postgres
+
+  registry:
+    image: xinyangxu/registry:latest
+    container_name: accompanyMe_registry
+    ports:
+      - "8761:8761"
+    depends_on:
+      - postgres
+      - zipkin
+      - rabbitmq
+    networks:
+      - microservice-network
+      - postgres
+
+  authservice:
+    image: xinyangxu/authservice:latest
+    container_name: accompanyMe_authservice
+    ports:
+      - "8081:8081"
+    depends_on:
+      - registry
+      - postgres
+    networks:
+      - microservice-network
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/accompanyme
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry:8761/eureka
+
+  userservice:
+    image: xinyangxu/userservice:latest
+    container_name: accompanyMe_userservice
+    ports:
+      - "8082:8082"
+    depends_on:
+      - registry
+      - postgres
+    networks:
+      - microservice-network
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/accompanyme
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry:8761/eureka
+
+  availabilityservice:
+    image: xinyangxu/availabilityservice:latest
+    container_name: accompanyMe_availabilityservice
+    ports:
+      - "8083:8083"
+    depends_on:
+      - registry
+      - postgres
+    networks:
+      - microservice-network
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/accompanyme
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry:8761/eureka
+
+  appointmentservice:
+    image: xinyangxu/appointmentservice:latest
+    container_name: accompanyMe_appointmentservice
+    ports:
+      - "8084:8084"
+    depends_on:
+      - registry
+      - postgres
+    networks:
+      - microservice-network
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/accompanyme
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry:8761/eureka
+
+  gateway:
+    image: xinyangxu/gateway:latest
+    container_name: accompanyMe_gateway
+    ports:
+      - "9000:9000"
+    depends_on:
+      - registry
+      - postgres
+      - authservice
+      - userservice
+      - availabilityservice
+      - appointmentservice
+    networks:
+      - microservice-network
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+networks:
+  microservice-network:
+    driver: bridge
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:

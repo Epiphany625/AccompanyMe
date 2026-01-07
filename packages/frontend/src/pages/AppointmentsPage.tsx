@@ -5,7 +5,7 @@ import { useValidateUser } from "../utils/hooks"
 import { AddAvailabilityCard } from "../components/AddAvailabilityCard"
 import { UserAvailabilityList } from "../components/UserAvailabilityList"
 import { ROOT } from "../constants"
-import { AppointmentRecord, AppointmentStatus } from "../types"
+import { AppointmentRecordResponse, AppointmentStatus } from "../types"
 import { useUserState } from "../state/user.hooks"
 import "./PageLayout.css"
 import "./AppointmentsPage.css"
@@ -44,7 +44,7 @@ const getTimeValue = (raw: string) => {
 const AppointmentCard = ({
   appointment,
 }: {
-  appointment: AppointmentRecord
+  appointment: AppointmentRecordResponse
 }) => {
   const statusClass = STATUS_CLASS_MAP[appointment.status]
   const clientLabel = formatClientLabel(appointment.clientUserId)
@@ -93,7 +93,7 @@ const AppointmentList = ({
   appointments,
   emptyMessage,
 }: {
-  appointments: AppointmentRecord[]
+  appointments: AppointmentRecordResponse[]
   emptyMessage: string
 }) => {
   if (!appointments.length) {
@@ -118,7 +118,9 @@ const AppointmentList = ({
 export const AppointmentsPage = () => {
   useValidateUser()
   const { userId } = useUserState()
-  const [appointments, setAppointments] = useState<AppointmentRecord[]>([])
+  const [appointments, setAppointments] = useState<AppointmentRecordResponse[]>(
+    [],
+  )
   const [appointmentsStatus, setAppointmentsStatus] = useState<
     "idle" | "loading" | "ready" | "error"
   >("idle")
@@ -137,7 +139,7 @@ export const AppointmentsPage = () => {
       setAppointmentsStatus("loading")
       setAppointmentsError("")
       try {
-        const response = await axios.get<AppointmentRecord[]>(
+        const response = await axios.get<AppointmentRecordResponse[]>(
           `${ROOT}/appointments/user/${userId}`,
         )
         if (!isMounted) {
@@ -169,8 +171,8 @@ export const AppointmentsPage = () => {
   }, [userId])
 
   const { upcomingAppointments, pastAppointments } = useMemo(() => {
-    const upcoming: AppointmentRecord[] = []
-    const past: AppointmentRecord[] = []
+    const upcoming: AppointmentRecordResponse[] = []
+    const past: AppointmentRecordResponse[] = []
     const now = Date.now()
 
     appointments.forEach(appointment => {

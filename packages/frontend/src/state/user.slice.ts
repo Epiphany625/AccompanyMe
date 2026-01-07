@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { UserState } from "../types"
+import { UserState, AuthResponse } from "../types"
 import { ROOT } from "../constants"
 import axios from "axios"
 
@@ -7,13 +7,6 @@ type LoginArgs = {
   inputEmail: string
   password: string
 }
-
-type LoginResponse = {
-  userId: string
-  email: string
-  username: string
-}
-
 type SignUpArgs = {
   inputUsername: string
   inputEmail: string
@@ -31,7 +24,7 @@ export const logOut = createAsyncThunk("user/logout", async () => {
 })
 
 export const logIn = createAsyncThunk<
-  LoginResponse,
+  AuthResponse,
   LoginArgs,
   { rejectValue: string }
 >("user/login", async ({ inputEmail, password }, thunkAPI) => {
@@ -53,7 +46,7 @@ export const logIn = createAsyncThunk<
 })
 
 export const signUp = createAsyncThunk<
-  LoginResponse,
+  AuthResponse,
   SignUpArgs,
   { rejectValue: string }
 >(

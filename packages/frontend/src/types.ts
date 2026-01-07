@@ -54,7 +54,15 @@ export type AppointmentStatus =
   | "cancelled"
   | "pending"
 
-export type AppointmentRecord = {
+// Response data structures
+
+export type AuthResponse = {
+  userId: string
+  email: string
+  username: string
+}
+
+export type AppointmentRecordResponse = {
   id: string
   userId: string
   clientUserId: string

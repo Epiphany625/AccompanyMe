@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 // Define the FeignClient interface
-@FeignClient(name = "userservice")
+@FeignClient(name = "userservice", url = "${UserService.url}")
 public interface UserClient { // Use an interface, not a class
     @PostMapping("/user")
     ResponseEntity<?> createUser(@RequestBody UserDto userDto);

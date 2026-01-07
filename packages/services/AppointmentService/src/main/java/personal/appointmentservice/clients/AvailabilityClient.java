@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import personal.appointmentservice.dtos.AvailabilityResponseDto;
 
-@FeignClient("AvailabilityService")
+@FeignClient(name = "availabilityservice", url = "${AvailabilityService.url}")
 public interface AvailabilityClient {
 
     @PostMapping("availabilities/schedule/{availabilityId}")
